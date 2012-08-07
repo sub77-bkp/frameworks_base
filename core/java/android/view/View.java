@@ -1980,7 +1980,7 @@ public class View implements Drawable.Callback, KeyEvent.Callback,
     static final int PFLAG2_TEXT_DIRECTION_RESOLVED_DEFAULT =
             TEXT_DIRECTION_RESOLVED_DEFAULT << PFLAG2_TEXT_DIRECTION_RESOLVED_MASK_SHIFT;
 
-    /*
+    /**
      * Default text alignment. The text alignment of this View is inherited from its parent.
      * Use with {@link #setTextAlignment(int)}
      */
