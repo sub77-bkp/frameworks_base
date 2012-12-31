@@ -43,6 +43,8 @@ import android.os.IBinder;
 import android.os.Parcelable;
 import android.os.RemoteException;
 import android.os.SystemProperties;
+import android.os.UserHandle;
+import android.provider.Settings;
 import android.util.Log;
 import android.util.Slog;
 import android.util.SparseArray;
@@ -145,8 +147,13 @@ public class KeyguardViewManager {
 
     private boolean shouldEnableScreenRotation() {
         Resources res = mContext.getResources();
+        int defaultValue = res.getBoolean(com.android.internal.R.bool.config_enableLockScreenRotation) ? 1 : 0;
         return SystemProperties.getBoolean("lockscreen.rot_override",false)
-                || res.getBoolean(R.bool.config_enableLockScreenRotation);
+                || Settings.System.getIntForUser(
+                        mContext.getContentResolver(),
+                        Settings.System.LOCKSCREEN_AUTO_ROTATE,
+                        defaultValue,
+                        UserHandle.USER_CURRENT) == 1;
     }
 
     private boolean shouldEnableTranslucentDecor() {

@@ -3497,6 +3497,12 @@ public final class Settings {
         public static final String LOCKSCREEN_ALWAYS_SHOW_BATTERY = "lockscreen_always_show_battery";
 
         /**
+         * Whether to enable lockscreen rotation
+         * @hide
+         */
+        public static final String LOCKSCREEN_AUTO_ROTATE = "lockscreen_auto_rotate";
+
+        /**
          * Whether to use the custom quick unlock screen control
          * @hide
          */
