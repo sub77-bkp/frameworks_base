@@ -3125,6 +3125,12 @@ public final class Settings {
         public static final String NAVRING_CONFIG = "navring_config";
 
         /**
+         * Swap volume buttons when the screen is rotated by 90 or 180 degrees
+         * @hide
+         */
+        public static final String SWAP_VOLUME_KEYS_BY_ROTATE = "swap_volume_keys_by_rotate";
+         
+        /**
          * Wether the navbar menu button is on the left/right/both
          * @hide
          */
