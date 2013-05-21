@@ -465,7 +465,7 @@ public class WindowManagerService extends IWindowManager.Stub
     String mLastANRState;
 
     /** All DisplayDontents in the world, kept here */
-    SparseArray<DisplayContent> mDisplayContents = new SparseArray<DisplayContent>();
+    SparseArray<DisplayContent> mDisplayContents = new SparseArray<DisplayContent>(2);
 
     int mRotation = 0;
     int mForcedAppOrientation = ActivityInfo.SCREEN_ORIENTATION_UNSPECIFIED;
