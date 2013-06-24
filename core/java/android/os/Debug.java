@@ -16,6 +16,7 @@
 
 package android.os;
 
+import com.android.internal.util.FastPrintWriter;
 import com.android.internal.util.TypedProperties;
 
 import android.util.Log;
@@ -364,7 +365,7 @@ public final class Debug
         PrintWriter outStream = null;
         try {
             FileOutputStream fos = new FileOutputStream(SYSFS_QEMU_TRACE_STATE);
-            outStream = new PrintWriter(new OutputStreamWriter(fos));
+            outStream = new FastPrintWriter(fos);
             outStream.println("1");
         } catch (Exception e) {
         } finally {
@@ -392,7 +393,7 @@ public final class Debug
         PrintWriter outStream = null;
         try {
             FileOutputStream fos = new FileOutputStream(SYSFS_QEMU_TRACE_STATE);
-            outStream = new PrintWriter(new OutputStreamWriter(fos));
+            outStream = new FastPrintWriter(fos);
             outStream.println("0");
         } catch (Exception e) {
             // We could print an error message here but we probably want

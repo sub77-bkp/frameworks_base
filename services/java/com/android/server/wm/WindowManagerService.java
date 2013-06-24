@@ -50,6 +50,7 @@ import com.android.internal.app.ThemeUtils;
 
 import com.android.internal.policy.PolicyManager;
 import com.android.internal.policy.impl.PhoneWindowManager;
+import com.android.internal.util.FastPrintWriter;
 import com.android.internal.view.IInputContext;
 import com.android.internal.view.IInputMethodClient;
 import com.android.internal.view.IInputMethodManager;
@@ -5183,8 +5184,9 @@ public class WindowManagerService extends IWindowManager.Stub
             if (DEBUG_SCREEN_ON || DEBUG_BOOT) Slog.i(TAG, "******************** ENABLING SCREEN!");
             if (false) {
                 StringWriter sw = new StringWriter();
-                PrintWriter pw = new PrintWriter(sw);
+                PrintWriter pw = new FastPrintWriter(sw, false, 1024);
                 this.dump(null, pw, null);
+                pw.flush();
                 Slog.i(TAG, sw.toString());
             }
             try {
@@ -7821,7 +7823,7 @@ public class WindowManagerService extends IWindowManager.Stub
                 WindowState ws = mRebuildTmp[i];
                 if (ws.mRebuilding) {
                     StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
+                    PrintWriter pw = new FastPrintWriter(sw, false, 1024);
                     ws.dump(pw, "", true);
                     pw.flush();
                     Slog.w(TAG, "This window was lost: " + ws);
@@ -10423,7 +10425,7 @@ public class WindowManagerService extends IWindowManager.Stub
      */
     public void saveANRStateLocked(AppWindowToken appWindowToken, WindowState windowState) {
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
+        PrintWriter pw = new FastPrintWriter(sw, false, 1024);
         pw.println("  ANR time: " + DateFormat.getInstance().format(new Date()));
         if (appWindowToken != null) {
             pw.println("  Application at fault: " + appWindowToken.stringName);

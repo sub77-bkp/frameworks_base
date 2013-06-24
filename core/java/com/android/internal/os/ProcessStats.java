@@ -22,6 +22,7 @@ import android.os.Process;
 import android.os.StrictMode;
 import android.os.SystemClock;
 import android.util.Slog;
+import com.android.internal.util.FastPrintWriter;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -671,13 +672,14 @@ public class ProcessStats {
     
     final public String printCurrentLoad() {
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
+        PrintWriter pw = new FastPrintWriter(sw, false, 128);
         pw.print("Load: ");
         pw.print(mLoad1);
         pw.print(" / ");
         pw.print(mLoad5);
         pw.print(" / ");
         pw.println(mLoad15);
+        pw.flush();
         return sw.toString();
     }
 
@@ -685,7 +687,7 @@ public class ProcessStats {
         buildWorkingProcs();
         
         StringWriter sw = new StringWriter();
-        PrintWriter pw = new PrintWriter(sw);
+        PrintWriter pw = new FastPrintWriter(sw, false, 1024);
         
         pw.print("CPU usage from ");
         if (now > mLastSampleTime) {
@@ -736,7 +738,8 @@ public class ProcessStats {
         
         printProcessCPU(pw, "", -1, "TOTAL", totalTime, mRelUserTime, mRelSystemTime,
                 mRelIoWaitTime, mRelIrqTime, mRelSoftIrqTime, 0, 0);
-        
+
+        pw.flush();
         return sw.toString();
     }
     

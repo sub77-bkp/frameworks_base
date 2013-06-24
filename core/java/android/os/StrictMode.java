@@ -31,6 +31,7 @@ import android.view.IWindowManager;
 
 import com.android.internal.os.RuntimeInit;
 
+import com.android.internal.util.FastPrintWriter;
 import dalvik.system.BlockGuard;
 import dalvik.system.CloseGuard;
 import dalvik.system.VMDebug;
@@ -1684,7 +1685,9 @@ public final class StrictMode {
     /* package */ static void readAndHandleBinderCallViolations(Parcel p) {
         // Our own stack trace to append
         StringWriter sw = new StringWriter();
-        new LogStackTrace().printStackTrace(new PrintWriter(sw));
+        PrintWriter pw = new FastPrintWriter(sw, false, 256);
+        new LogStackTrace().printStackTrace(pw);
+        pw.flush();
         String ourStack = sw.toString();
 
         int policyMask = getThreadPolicyMask();
