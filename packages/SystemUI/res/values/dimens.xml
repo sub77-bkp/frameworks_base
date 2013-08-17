@@ -271,4 +271,7 @@
     <dimen name="pie_sysinfo_second_layer_radius">255dp</dimen>
     <dimen name="pie_sysinfo_height">85sp</dimen>
 
+    <!-- Network stats text size -->
+    <dimen name="network_stats_text_size">9dp</dimen>
+
 </resources>
