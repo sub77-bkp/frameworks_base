@@ -8773,7 +8773,7 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
         boolean frozenWithFocus;
         CharSequence error;
 
-        SavedState(Parcelable superState) {
+        public SavedState(Parcelable superState) {
             super(superState);
         }
 
@@ -8816,7 +8816,7 @@ public class TextView extends View implements ViewTreeObserver.OnPreDrawListener
             }
         };
 
-        private SavedState(Parcel in) {
+        public SavedState(Parcel in) {
             super(in);
             selStart = in.readInt();
             selEnd = in.readInt();
