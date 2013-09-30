@@ -144,7 +144,7 @@ public class ScreenTimeoutTile extends QuickSettingsTile {
         int resId;
         String timeoutSummary = null;
 
-        if (timeout == SCREEN_TIMEOUT_NEVER) {
+        if (timeout == SCREEN_TIMEOUT_NEVER || timeout == StayAwakeTile.SCREEN_TIMEOUT_NEVERSLEEP) {
             timeoutSummary = res.getString(R.string.quick_settings_screen_timeout_summary_never);
         } else {
             /* ms -> seconds */

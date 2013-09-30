@@ -33,9 +33,10 @@ import com.android.systemui.statusbar.phone.QuickSettingsContainerView;
 
 public class StayAwakeTile extends QuickSettingsTile {
 
-    private static final int SCREEN_TIMEOUT_NEVERSLEEP = Integer.MAX_VALUE; // MAX_VALUE equates to approx 24 days
+    public static final int SCREEN_TIMEOUT_NEVERSLEEP = Integer.MAX_VALUE; // MAX_VALUE equates to approx 24 days
+    private static final int SCREEN_TIMEOUT_MIN       =  15000;
     
-    private int storedUserTimeout;
+    private int storedUserTimeout = SCREEN_TIMEOUT_MIN;
 
     public static QuickSettingsTile mInstance;
 
@@ -49,6 +50,8 @@ public class StayAwakeTile extends QuickSettingsTile {
     public StayAwakeTile(Context context,
             LayoutInflater inflater, QuickSettingsContainerView container, QuickSettingsController qsc) {
         super(context, inflater, container, qsc);
+
+        updateTileState();
 
         mOnClick = new OnClickListener() {
             @Override
@@ -65,6 +68,17 @@ public class StayAwakeTile extends QuickSettingsTile {
                 return true;
             }
         };
+    }
+
+    protected void updateTileState() {
+        int screenTimeout = getScreenTimeout();
+        if (screenTimeout == SCREEN_TIMEOUT_NEVERSLEEP) {
+            mLabel = mContext.getString(R.string.quick_settings_stayawake);
+            mDrawable = R.drawable.ic_qs_stayawake_on;
+        } else {
+            mLabel = mContext.getString(R.string.quick_settings_stayawake_off);
+            mDrawable = R.drawable.ic_qs_stayawake_off;
+        }
     }
 
     protected void toggleState() {
