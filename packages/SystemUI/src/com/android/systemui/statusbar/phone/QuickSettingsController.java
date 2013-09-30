@@ -96,6 +96,7 @@ public class QuickSettingsController {
     public static final String TILE_WIFI = "toggleWifi";
     public static final String TILE_WIFIAP = "toggleWifiAp";
     public static final String TILE_WIFIDISPLAY = "toggleWifiDisplay";
+    public static final String TILE_STAYAWAKE = "toggleStayAwake";
     // not yet supported
     public static final String TILE_WIMAX = "toggleWimax";
 
@@ -136,6 +137,7 @@ public class QuickSettingsController {
         TILES_CLASSES.put(TILE_WIFI, "com.android.systemui.quicksettings.WiFiTile");
         TILES_CLASSES.put(TILE_WIFIAP, "com.android.systemui.quicksettings.WifiAPTile");
         TILES_CLASSES.put(TILE_WIFIDISPLAY, "com.android.systemui.quicksettings.WiFiDisplayTile");
+        TILES_CLASSES.put(TILE_STAYAWAKE, "com.android.systemui.quicksettings.StayAwakeTile");
     }
 
     private static final String TILE_DELIMITER = "|";
