@@ -29,7 +29,8 @@ import java.util.Set;
  *
  */
 public final class Bundle implements Parcelable, Cloneable {
-    private static final String LOG_TAG = "Bundle";
+    private static final String TAG = "Bundle";
+    static final boolean DEBUG = false;
     public static final Bundle EMPTY;
 
     static {
@@ -154,7 +155,7 @@ public final class Bundle implements Parcelable, Cloneable {
         unparcel();
         int size = mMap.size();
         if (size > 1) {
-            Log.w(LOG_TAG, "getPairValue() used on Bundle with multiple pairs.");
+            Log.w(TAG, "getPairValue() used on Bundle with multiple pairs.");
         }
         if (size == 0) {
             return null;
@@ -207,10 +208,14 @@ public final class Bundle implements Parcelable, Cloneable {
      */
     /* package */ synchronized void unparcel() {
         if (mParcelledData == null) {
+            if (DEBUG) Log.d(TAG, "unparcel " + Integer.toHexString(System.identityHashCode(this))
+                    + ": no parcelled data");
             return;
         }
 
         int N = mParcelledData.readInt();
+        if (DEBUG) Log.d(TAG, "unparcel " + Integer.toHexString(System.identityHashCode(this))
+                + ": reading " + N + " maps");
         if (N < 0) {
             return;
         }
@@ -223,6 +228,8 @@ public final class Bundle implements Parcelable, Cloneable {
         mParcelledData.readArrayMapInternal(mMap, N, mClassLoader);
         mParcelledData.recycle();
         mParcelledData = null;
+        if (DEBUG) Log.d(TAG, "unparcel " + Integer.toHexString(System.identityHashCode(this))
+                + " final map: " + mMap);
     }
 
     /**
@@ -784,6 +791,8 @@ public final class Bundle implements Parcelable, Cloneable {
      */
     public boolean getBoolean(String key) {
         unparcel();
+        if (DEBUG) Log.d(TAG, "Getting boolean in "
+                + Integer.toHexString(System.identityHashCode(this)));
         return getBoolean(key, false);
     }
 
@@ -800,8 +809,8 @@ public final class Bundle implements Parcelable, Cloneable {
         sb.append(".  The default value ");
         sb.append(defaultValue);
         sb.append(" was returned.");
-        Log.w(LOG_TAG, sb.toString());
-        Log.w(LOG_TAG, "Attempt to cast generated internal exception:", e);
+        Log.w(TAG, sb.toString());
+        Log.w(TAG, "Attempt to cast generated internal exception:", e);
     }
 
     private void typeWarning(String key, Object value, String className,
@@ -1638,18 +1647,19 @@ public final class Bundle implements Parcelable, Cloneable {
                 parcel.writeInt(0x4C444E42); // 'B' 'N' 'D' 'L'
                 parcel.appendFrom(mParcelledData, 0, length);
             } else {
+                int lengthPos = parcel.dataPosition();
                 parcel.writeInt(-1); // dummy, will hold length
                 parcel.writeInt(0x4C444E42); // 'B' 'N' 'D' 'L'
     
-                int oldPos = parcel.dataPosition();
+                int startPos = parcel.dataPosition();
                 parcel.writeArrayMapInternal(mMap);
-                int newPos = parcel.dataPosition();
+                int endPos = parcel.dataPosition();
     
                 // Backpatch length
-                parcel.setDataPosition(oldPos - 8);
-                int length = newPos - oldPos;
+                parcel.setDataPosition(lengthPos);
+                int length = endPos - startPos;
                 parcel.writeInt(length);
-                parcel.setDataPosition(newPos);
+                parcel.setDataPosition(endPos);
             }
         } finally {
             parcel.restoreAllowFds(oldAllowFds);
@@ -1685,8 +1695,10 @@ public final class Bundle implements Parcelable, Cloneable {
         Parcel p = Parcel.obtain();
         p.setDataPosition(0);
         p.appendFrom(parcel, offset, length);
+        if (DEBUG) Log.d(TAG, "Retrieving "  + Integer.toHexString(System.identityHashCode(this))
+                + ": " + length + " bundle bytes starting at " + offset);
         p.setDataPosition(0);
-        
+
         mParcelledData = p;
         mHasFds = p.hasFileDescriptors();
         mFdsKnown = true;

@@ -282,6 +282,7 @@ public final class ArrayMap<K, V> implements Map<K, V> {
             for (int i=0; i<N; i++) {
                 array[i] = null;
             }
+            mSize = 0;
         }
     }
 
