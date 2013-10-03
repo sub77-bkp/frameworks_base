@@ -163,7 +163,7 @@ public class ActiveDisplayView extends FrameLayout {
             if (shouldShowNotification() && isValidNotification(sbn)) {
                 // need to make sure either the screen is off or the user is currently
                 // viewing the notifications
-                if (!isCallIncoming()) {
+                if (!isCallIncoming() && !isOnCall()) {
 		     if (ActiveDisplayView.this.getVisibility() == View.VISIBLE
 		            || !isScreenOn())
 		         showNotification(sbn, true);
@@ -1034,7 +1034,7 @@ public class ActiveDisplayView extends FrameLayout {
             if (event.sensor.equals(mProximitySensor)) {
                 if (value >= mProximitySensor.getMaximumRange()) {
                     mProximityIsFar = true;
-                    if (!isScreenOn() && mPocketModeEnabled && !isOnCall()) {
+                    if (!isScreenOn() && mPocketModeEnabled && !isOnCall() && !isCallIncoming()) {
                         mNotification = getNextAvailableNotification();
                         if (mNotification != null) showNotification(mNotification, true);
                     }
