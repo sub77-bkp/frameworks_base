@@ -1,5 +1,6 @@
 /*
- * Copyright (c) 2010-2011, Motorola, Inc.
+ * Copyright (c) 2013, The Linux Foundation. All rights reserved.
+ * Copyright (c) 2008-2009, Motorola, Inc.
  *
  * All rights reserved.
  *
@@ -124,12 +125,15 @@ public final class ClientOperation implements Operation, BaseStream {
                     (header).mAuthResp.length);
 
         }
-        if ((header).mConnectionID != null) {
-            mRequestHeader.mConnectionID = new byte[4];
-            System.arraycopy((header).mConnectionID, 0, mRequestHeader.mConnectionID, 0,
-                    4);
+    }
 
-        }
+    /**
+     * Allows to set flag which will force GET to be always sent as single packet request with
+     * final flag set. This is to improve compatibility with some profiles, i.e. PBAP which
+     * require requests to be sent this way.
+     */
+    public void setGetFinalFlag(boolean flag) {
+        mGetFinalFlag = flag;
     }
 
     /**
@@ -760,7 +764,6 @@ public final class ClientOperation implements Operation, BaseStream {
             }
         }
     }
-
     public void noEndofBody() {
 
     }
