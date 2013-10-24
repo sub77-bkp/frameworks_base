@@ -201,6 +201,7 @@ public class ImageWallpaper extends WallpaperService {
             if (mReceiver != null) {
                 unregisterReceiver(mReceiver);
             }
+            mBackground = null;
         }
 
         @Override
