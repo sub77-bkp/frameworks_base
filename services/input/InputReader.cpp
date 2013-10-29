@@ -2156,12 +2156,11 @@ void KeyboardInputMapper::processKey(nsecs_t when, bool down, int32_t keyCode,
         }
     }
 
-    bool metaStateChanged = false;
     int32_t oldMetaState = mMetaState;
     int32_t newMetaState = updateMetaState(keyCode, down, oldMetaState);
-    if (oldMetaState != newMetaState) {
+    bool metaStateChanged = oldMetaState != newMetaState;
+    if (metaStateChanged) {
         mMetaState = newMetaState;
-        metaStateChanged = true;
         updateLedState(false);
     }
 
@@ -2957,7 +2956,6 @@ void TouchInputMapper::configureSurface(nsecs_t when, bool* outResetNeeded) {
     int32_t rawHeight = mRawPointerAxes.y.maxValue - mRawPointerAxes.y.minValue + 1;
 
     // Get associated display dimensions.
-    bool viewportChanged = false;
     DisplayViewport newViewport;
     if (mParameters.hasAssociatedDisplay) {
         if (!mConfig.getDisplayInfo(mParameters.associatedDisplayIsExternal, &newViewport)) {
@@ -2971,9 +2969,9 @@ void TouchInputMapper::configureSurface(nsecs_t when, bool* outResetNeeded) {
     } else {
         newViewport.setNonDisplayViewport(rawWidth, rawHeight);
     }
-    if (mViewport != newViewport) {
+    bool viewportChanged = mViewport != newViewport;
+    if (viewportChanged) {
         mViewport = newViewport;
-        viewportChanged = true;
 
         if (mDeviceMode == DEVICE_MODE_DIRECT || mDeviceMode == DEVICE_MODE_POINTER) {
             // Convert rotated viewport to natural surface coordinates.
@@ -3042,9 +3040,8 @@ void TouchInputMapper::configureSurface(nsecs_t when, bool* outResetNeeded) {
     }
 
     // If moving between pointer modes, need to reset some state.
-    bool deviceModeChanged;
-    if (mDeviceMode != oldDeviceMode) {
-        deviceModeChanged = true;
+    bool deviceModeChanged = mDeviceMode != oldDeviceMode;
+    if (deviceModeChanged) {
         mOrientedRanges.clear();
     }
 
