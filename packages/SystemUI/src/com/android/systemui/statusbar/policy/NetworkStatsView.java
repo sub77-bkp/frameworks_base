@@ -48,6 +48,8 @@ public class NetworkStatsView extends LinearLayout {
     private long mRefreshInterval;
     private long mLastUpdateTime;
 
+    protected int mNetStatsColor;
+
     SettingsObserver mSettingsObserver;
 
     public NetworkStatsView(Context context) {
@@ -92,6 +94,8 @@ public class NetworkStatsView extends LinearLayout {
                     Settings.System.STATUS_BAR_NETWORK_STATS), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.STATUS_BAR_NETWORK_STATS_UPDATE_INTERVAL), false, this);
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUS_BAR_NETWORK_STATS_TEXT_COLOR), false, this);
             onChange(true);
         }
 
@@ -108,6 +112,14 @@ public class NetworkStatsView extends LinearLayout {
 
             mRefreshInterval = Settings.System.getLong(mContext.getContentResolver(),
                     Settings.System.STATUS_BAR_NETWORK_STATS_UPDATE_INTERVAL, 500);
+
+            int newColor = Settings.System.getInt(mContext.getContentResolver(),
+                    Settings.System.STATUS_BAR_NETWORK_STATS_TEXT_COLOR, mNetStatsColor);
+            if (newColor < 0 && newColor != mNetStatsColor) {
+                mNetStatsColor = newColor;
+                if (mTextViewTx != null) mTextViewTx.setTextColor(mNetStatsColor);
+                if (mTextViewRx != null) mTextViewRx.setTextColor(mNetStatsColor);
+            }
 
             setVisibility(mActivated ? View.VISIBLE : View.GONE);
 
@@ -140,6 +152,7 @@ public class NetworkStatsView extends LinearLayout {
         super.onAttachedToWindow();
         if (!mAttached) {
             mAttached = true;
+            mNetStatsColor = mTextViewTx.getTextColors().getDefaultColor();
             mHandler.postDelayed(mUpdateRunnable, mRefreshInterval);
         }
     }
