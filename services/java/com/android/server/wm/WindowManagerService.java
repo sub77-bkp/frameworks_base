@@ -5441,11 +5441,6 @@ public class WindowManagerService extends IWindowManager.Stub
                             ws.isDisplayedLw()) {
                         screenshotReady = true;
                     }
-
-                    if (fullscreen) {
-                        // No point in continuing down through windows.
-                        break;
-                    }
                 }
 
                 if (appToken != null && appWin == null) {
