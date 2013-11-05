@@ -642,7 +642,7 @@ public class ActiveDisplayView extends FrameLayout {
     }
 
     private void handleShowNotification(boolean ping) {
-        if (!mDisplayNotifications) return;
+        if (!mDisplayNotifications || mNotification == null) return;
         showNotificationView();
         setActiveNotification(mNotification, true);
         inflateRemoteView(mNotification);
