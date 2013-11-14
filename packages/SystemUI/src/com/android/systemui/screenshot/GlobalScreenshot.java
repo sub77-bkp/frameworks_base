@@ -126,6 +126,14 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
 
         mScreenshotDir = new File(Environment.getExternalStoragePublicDirectory(
                 Environment.DIRECTORY_PICTURES), SCREENSHOTS_DIR_NAME);
+
+        // Create screenshot directory if it doesn't exist
+	if (!mScreenshotDir.exists()) {
+		if (!mScreenshotDir.mkdirs()) {
+			Log.e(TAG, "Cannot create screenshots directory");
+		}
+	}
+
         mImageFilePath = new File(mScreenshotDir, mImageFileName).getAbsolutePath();
 
         // Create the large notification icon
@@ -195,9 +203,6 @@ class SaveImageInBackgroundTask extends AsyncTask<SaveImageInBackgroundData, Voi
         Resources r = context.getResources();
         OutputStream outStream = null;
         try {
-            // Create screenshot directory if it doesn't exist
-            mScreenshotDir.mkdirs();
-
             // Save the screenshot to the MediaStore
             ContentValues values = new ContentValues();
             ContentResolver resolver = context.getContentResolver();
