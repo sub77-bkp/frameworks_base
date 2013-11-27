@@ -52,6 +52,7 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.Slog;
 import android.view.Display;
+import android.view.HardwareRenderer;
 
 import java.util.HashMap;
 import java.util.List;
@@ -224,9 +225,15 @@ public class ActivityManager {
     /** @hide User operation call: given user id is the current user, can't be stopped. */
     public static final int USER_OP_IS_CURRENT = -2;
 
+    private static boolean NOPE;
+
     /*package*/ ActivityManager(Context context, Handler handler) {
         mContext = context;
         mHandler = handler;
+
+        NOPE = (isLowRamDeviceStatic() ||
+                !HardwareRenderer.isAvailable()      ||
+                Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel));
     }
 
     /**
@@ -398,8 +405,10 @@ public class ActivityManager {
      * @hide
      */
     static public boolean isHighEndGfx() {
-        return !isLowRamDeviceStatic() &&
-                !Resources.getSystem().getBoolean(com.android.internal.R.bool.config_avoidGfxAccel);
+        if (NOPE) {
+			return false;
+        }
+        return true;
     }
 
     /**
