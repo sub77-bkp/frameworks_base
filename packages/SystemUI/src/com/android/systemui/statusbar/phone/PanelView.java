@@ -40,7 +40,7 @@ public class PanelView extends FrameLayout {
     public static final boolean DEBUG = PanelBar.DEBUG;
     public static final String TAG = PanelView.class.getSimpleName();
 
-    public static final boolean DEBUG_NAN = true; // http://b/7686690
+    public static final boolean DEBUG_NAN = false; // http://b/7686690
 
     private final void logf(String fmt, Object... args) {
         Log.v(TAG, (mViewName != null ? (mViewName + ": ") : "") + String.format(fmt, args));
@@ -322,7 +322,7 @@ public class PanelView extends FrameLayout {
                     || ((mRubberbanding || !mClosing) && mExpandedHeight == fh)) {
                 post(mStopAnimator);
             }
-        } else {
+        } else if (DEBUG) {
             Log.v(TAG, "animationTick called with dtms=" + dtms + "; nothing to do (h="
                     + mExpandedHeight + " v=" + mVel + ")");
         }
