@@ -2288,6 +2288,9 @@ public class DatabaseHelper extends SQLiteOpenHelper {
                         RILConstants.PREFERRED_NETWORK_MODE);
             loadSetting(stmt, Settings.Global.PREFERRED_NETWORK_MODE, type);
 
+            loadIntegerSetting(stmt, Settings.Global.WIFI_SCAN_ALWAYS_AVAILABLE,
+                    R.integer.def_wifi_scan_always_available);
+
             // --- New global settings start here
         } finally {
             if (stmt != null) stmt.close();

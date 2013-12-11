@@ -175,4 +175,8 @@
 
     <!-- Default for Settings.Secure.DIALPAD_AUTOCOMPLETE. -->
     <integer name="def_dialpad_autocomplete">1</integer>
+
+    <!-- Default for Settings.Global.WIFI_SCAN_ALWAYS_AVAILABLE -->
+    <integer name="def_wifi_scan_always_available">0</integer>
+
 </resources>
