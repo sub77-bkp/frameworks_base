@@ -27,11 +27,13 @@ import android.graphics.PorterDuff.Mode;
 import android.graphics.drawable.ColorDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.EventLog;
 import android.util.Slog;
+import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.accessibility.AccessibilityEvent;
@@ -67,6 +69,7 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mLastFullyOpenedPanel = null;
     PanelView mNotificationPanel, mSettingsPanel;
     private boolean mShouldFade;
+    private GestureDetector mDoubleTapGesture;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -75,12 +78,28 @@ public class PhoneStatusBarView extends PanelBar {
         mScrimColor = res.getColor(R.color.notification_panel_scrim_color);
         mSettingsPanelDragzoneMin = res.getDimension(R.dimen.settings_panel_dragzone_min);
         try {
-            mSettingsPanelDragzoneFrac = res.getFraction(R.dimen.settings_panel_dragzone_fraction, 1, 1);
+            mSettingsPanelDragzoneFrac = res.getFraction(
+                    R.dimen.settings_panel_dragzone_fraction, 1, 1);
         } catch (NotFoundException ex) {
             mSettingsPanelDragzoneFrac = 0f;
         }
         mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
+
         updateSettings();
+
+        mDoubleTapGesture = new GestureDetector(mContext,
+                new GestureDetector.SimpleOnGestureListener() {
+            @Override
+            public boolean onDoubleTap(MotionEvent e) {
+                PowerManager pm = (PowerManager) mContext.getSystemService(Context.POWER_SERVICE);
+                if (pm != null) {
+                    pm.goToSleep(e.getEventTime());
+                } else {
+                    Log.d(TAG, "getSystemService returned null PowerManager");
+                }
+                return true;
+            }
+        });
     }
 
     public void setBar(PhoneStatusBar bar) {
@@ -236,6 +255,11 @@ public class PhoneStatusBarView extends PanelBar {
                         event.getActionMasked(), (int) event.getX(), (int) event.getY(),
                         barConsumedEvent ? 1 : 0);
             }
+        }
+
+        if (!mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_disableDoubleTapSleepGesture)) {
+            mDoubleTapGesture.onTouchEvent(event);
         }
 
         return barConsumedEvent || super.onTouchEvent(event);
