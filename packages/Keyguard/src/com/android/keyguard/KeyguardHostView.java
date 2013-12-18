@@ -244,9 +244,16 @@ public class KeyguardHostView extends KeyguardViewBase {
         // that are triggered by deleteAppWidgetId, which is why we're doing this
         int[] appWidgetIdsInKeyguardSettings = mLockPatternUtils.getAppWidgets();
         int[] appWidgetIdsBoundToHost = mAppWidgetHost.getAppWidgetIds();
+        int fallbackWidgetId = mLockPatternUtils.getFallbackAppWidgetId();
         for (int i = 0; i < appWidgetIdsBoundToHost.length; i++) {
             int appWidgetId = appWidgetIdsBoundToHost[i];
             if (!contains(appWidgetIdsInKeyguardSettings, appWidgetId)) {
+                if (appWidgetId == fallbackWidgetId) {
+                    // Reset fallback widget id in the event that widgets have been
+                    // enabled, and fallback widget is being deleted
+                    mLockPatternUtils.writeFallbackAppWidgetId(
+                            AppWidgetManager.INVALID_APPWIDGET_ID);
+                }
                 Log.d(TAG, "Found a appWidgetId that's not being used by keyguard, deleting id "
                         + appWidgetId);
                 mAppWidgetHost.deleteAppWidgetId(appWidgetId);
@@ -1381,7 +1388,6 @@ public class KeyguardHostView extends KeyguardViewBase {
 
     private void addWidgetsFromSettings() {
         if (mSafeModeEnabled || widgetsDisabled()) {
-            addDefaultStatusWidget(0);
             return;
         }
 
@@ -1435,7 +1441,9 @@ public class KeyguardHostView extends KeyguardViewBase {
                 break;
             }
         }
-        if (!widgetPageExists) {
+        Log.d(TAG, "checkAppWidgetConsistency");
+        if (true) {
+            Log.d(TAG, "widgetPageExists is true");
             final int insertPageIndex = getInsertPageIndex();
 
             final boolean userAddedWidgetsEnabled = !widgetsDisabled();
@@ -1443,12 +1451,15 @@ public class KeyguardHostView extends KeyguardViewBase {
             boolean addedDefaultAppWidget = false;
 
             if (!mSafeModeEnabled) {
+                Log.d(TAG, "mSafeModeEnabled is false");
                 if (userAddedWidgetsEnabled) {
+                    Log.d(TAG, "userAddedWidgetsEnabled is true");
                     int appWidgetId = allocateIdForDefaultAppWidget();
                     if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
                         addedDefaultAppWidget = addWidget(appWidgetId, insertPageIndex, true);
                     }
                 } else {
+                    Log.d(TAG, "userAddedWidgetsEnabled is false");
                     // note: even if widgetsDisabledByDpm() returns true, we still bind/create
                     // the default appwidget if possible
                     int appWidgetId = mLockPatternUtils.getFallbackAppWidgetId();
@@ -1467,8 +1478,9 @@ public class KeyguardHostView extends KeyguardViewBase {
                         }
                     }
                 }
+            } else {
+                Log.d(TAG, "mSafeModeEnabled is true");
             }
-
             // Use the built-in status/clock view if we can't inflate the default widget
             if (!addedDefaultAppWidget) {
                 addDefaultStatusWidget(insertPageIndex);
@@ -1479,6 +1491,8 @@ public class KeyguardHostView extends KeyguardViewBase {
                 mAppWidgetContainer.onAddView(
                         mAppWidgetContainer.getChildAt(insertPageIndex), insertPageIndex);
             }
+        } else {
+            Log.d(TAG, "widgetPageExists is false");
         }
     }
 
