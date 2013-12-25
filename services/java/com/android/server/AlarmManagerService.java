@@ -99,7 +99,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
 
     private Object mLock = new Object();
 
-    private long mNativeData;
+    private int mDescriptor;
     private long mNextWakeup;
     private long mNextNonWakeup;
     private int mBroadcastRefCount = 0;
@@ -464,7 +464,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
     
     public AlarmManagerService(Context context) {
         mContext = context;
-        mNativeData = init();
+        mDescriptor = init();
         mNextWakeup = mNextNonWakeup = 0;
 
         // We have to set current TimeZone info to kernel
@@ -493,7 +493,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
         mClockReceiver.scheduleDateChangedEvent();
         mUninstallReceiver = new UninstallReceiver();
         
-        if (mNativeData != 0) {
+        if (mDescriptor != -1) {
             mWaitThread.start();
         } else {
             Slog.w(TAG, "Failed to open alarm driver. Falling back to a handler.");
@@ -502,7 +502,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
     
     protected void finalize() throws Throwable {
         try {
-            close(mNativeData);
+            close(mDescriptor);
         } finally {
             super.finalize();
         }
@@ -702,7 +702,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
                 // Update the kernel timezone information
                 // Kernel tracks time offsets as 'minutes west of GMT'
                 int gmtOffset = zone.getOffset(System.currentTimeMillis());
-                setKernelTimezone(mNativeData, -(gmtOffset / 60000));
+                setKernelTimezone(mDescriptor, -(gmtOffset / 60000));
             }
 
             TimeZone.setDefault(null);
@@ -796,7 +796,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
 
     private void setLocked(int type, long when)
     {
-        if (mNativeData != 0)
+        if (mDescriptor != -1)
         {
             // The kernel never triggers alarms with negative wakeup times
             // so we ensure they are positive.
@@ -809,7 +809,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
                 alarmNanoseconds = (when % 1000) * 1000 * 1000;
             }
             
-            set(mNativeData, type, alarmSeconds, alarmNanoseconds);
+            set(mDescriptor, type, alarmSeconds, alarmNanoseconds);
         }
         else
         {
@@ -1014,11 +1014,11 @@ class AlarmManagerService extends IAlarmManager.Stub {
         }
     }
 
-    private native long init();
-    private native void close(long nativeData);
-    private native void set(long nativeData, int type, long seconds, long nanoseconds);
-    private native int waitForAlarm(long nativeData);
-    private native int setKernelTimezone(long nativeData, int minuteswest);
+    private native int init();
+    private native void close(int fd);
+    private native void set(int fd, int type, long seconds, long nanoseconds);
+    private native int waitForAlarm(int fd);
+    private native int setKernelTimezone(int fd, int minuteswest);
 
     private void triggerAlarmsLocked(ArrayList<Alarm> triggerList, long nowELAPSED, long nowRTC) {
         // batches are temporally sorted, so we need only pull from the
@@ -1158,7 +1158,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
 
             while (true)
             {
-                int result = waitForAlarm(mNativeData);
+                int result = waitForAlarm(mDescriptor);
 
                 triggerList.clear();
 
@@ -1340,7 +1340,7 @@ class AlarmManagerService extends IAlarmManager.Stub {
                 // daylight savings information.
                 TimeZone zone = TimeZone.getTimeZone(SystemProperties.get(TIMEZONE_PROPERTY));
                 int gmtOffset = zone.getOffset(System.currentTimeMillis());
-                setKernelTimezone(mNativeData, -(gmtOffset / 60000));
+                setKernelTimezone(mDescriptor, -(gmtOffset / 60000));
                 scheduleDateChangedEvent();
             }
         }
