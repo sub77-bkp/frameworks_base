@@ -289,7 +289,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
     private HorizontalScrollView mNotificationShortcutsScrollView;
     private boolean mNotificationShortcutsVisible;
     private boolean mNotificationShortcutsIsActive;
-    private boolean mNotificationHideCarrier;
     private FrameLayout.LayoutParams lpScrollView;
     private FrameLayout.LayoutParams lpCarrierLabel;
     private int mShortcutsDrawerMargin;
@@ -572,10 +571,12 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             mNotificationShortcutsIsActive = !(notificationShortcutsIsActive == null
                     || notificationShortcutsIsActive.isEmpty());
 
-            mNotificationHideCarrier = Settings.System.getIntForUser(resolver,
-                    Settings.System.NOTIFICATION_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) != 0;
             if (mCarrierLabel != null) {
-                toggleCarrierAndWifiLabelVisibility();
+                mShowCarrierInPanel = Settings.System.getIntForUser(resolver,
+                        Settings.System.NOTIFICATION_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) == 0;
+                updateCarrierMargin(!mShowCarrierInPanel);
+                mCarrierAndWifiView.setVisibility(
+                        mShowCarrierInPanel ? View.VISIBLE : View.INVISIBLE);
             }
             updateBatteryIcons();
         }
@@ -653,16 +654,9 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         }};
 
     private void doAutoHide() {
-        doAutoHide(false);
-    }
-    private void doAutoHide(boolean updateNow) {
-        final int requested = mSystemUiVisibility & ~STATUS_OR_NAV_TRANSIENT;
+        int requested = mSystemUiVisibility & ~STATUS_OR_NAV_TRANSIENT;
         if (mSystemUiVisibility != requested) {
             notifyUiVisibilityChanged(requested);
-
-            if (updateNow) {
-                updateBarModes(mSystemUiVisibility, requested);
-            }
         }
     }
 
@@ -912,21 +906,15 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             }
         }
 
-        mNotificationHideCarrier = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.NOTIFICATION_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) != 0;
-
         mCarrierAndWifiView = mStatusBarWindow.findViewById(R.id.carrier_wifi);
         mWifiView = mStatusBarWindow.findViewById(R.id.wifi_view);
         mCarrierLabel = (TextView)mStatusBarWindow.findViewById(R.id.carrier_label);
-        mShowCarrierInPanel = (mCarrierLabel != null);
-        if (DEBUG) Log.v(TAG, "carrierlabel=" + mCarrierLabel + " show=" + mShowCarrierInPanel);
-        if (mShowCarrierInPanel) {
+        if (mCarrierLabel != null) {
+            mShowCarrierInPanel = Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.NOTIFICATION_HIDE_CARRIER, 0, UserHandle.USER_CURRENT) == 0;
             lpCarrierLabel = (FrameLayout.LayoutParams) mCarrierAndWifiView.getLayoutParams();
-            mCarrierLabel.setVisibility((mCarrierAndWifiViewVisible && !mNotificationHideCarrier)
-                ? View.VISIBLE : View.INVISIBLE);
-            if (mNotificationHideCarrier) {
-                mShowCarrierInPanel = false;
-            }
+            mCarrierLabel.setVisibility((mCarrierAndWifiViewVisible && mShowCarrierInPanel)
+                    ? View.VISIBLE : View.INVISIBLE);
             // for mobile devices, we always show mobile connection info here (SPN/PLMN)
             // for other devices, we show whatever network is connected
             if (mNetworkController.hasMobileDataFeature()) {
@@ -1180,7 +1168,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         lpScrollView.bottomMargin = mNotificationShortcutsIsActive ? mShortcutsDrawerMargin : 0;
         mScrollView.setLayoutParams(lpScrollView);
 
-        if (!mShowCarrierInPanel) {
+        if (lpCarrierLabel == null) {
             return;
         }
         if (forceHide) {
@@ -1191,12 +1179,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 ? mShortcutsSpacingHeight : mCloseViewHeight;
         }
         mCarrierAndWifiView.setLayoutParams(lpCarrierLabel);
-    }
-
-    private void toggleCarrierAndWifiLabelVisibility() {
-        mShowCarrierInPanel = !mNotificationHideCarrier;
-        updateCarrierMargin(mNotificationHideCarrier);
-        mCarrierAndWifiView.setVisibility(mShowCarrierInPanel ? View.VISIBLE : View.INVISIBLE);
     }
 
     protected int getStatusBarGravity() {
@@ -1624,8 +1606,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             && mPile.getHeight() <
                 (mNotificationPanel.getHeight() - mCarrierAndWifiViewHeight
                 - mNotificationHeaderHeight - calculateCarrierLabelBottomMargin())
-            && mScrollView.getVisibility() == View.VISIBLE
-            && !forceHide;
+            && forceHide ? false : mScrollView.getVisibility() == View.VISIBLE;
 
         if (force || mCarrierAndWifiViewVisible != makeVisible) {
             mCarrierAndWifiViewVisible = makeVisible;
@@ -1638,15 +1619,13 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
             }
             mCarrierAndWifiView.animate()
                 .alpha(makeVisible ? 1f : 0f)
-                //.setStartDelay(makeVisible ? 500 : 0)
-                //.setDuration(makeVisible ? 750 : 100)
                 .setDuration(150)
                 .setListener(makeVisible ? null : new AnimatorListenerAdapter() {
                     @Override
                     public void onAnimationEnd(Animator animation) {
                         if (!mCarrierAndWifiViewVisible) { // race
                             mCarrierAndWifiView.setVisibility(View.INVISIBLE);
-                            mCarrierAndWifiView.animate().alpha(0f);
+                            mCarrierAndWifiView.setAlpha(0f);
                         }
                     }
                 })
@@ -2603,7 +2582,48 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 setAreThereNotifications();
             }
 
-            updateBarModes(oldVal, newVal);
+            // update status bar mode
+            final int sbMode = computeBarMode(oldVal, newVal, mStatusBarView.getBarTransitions(),
+                    View.STATUS_BAR_TRANSIENT, View.STATUS_BAR_TRANSLUCENT);
+
+            // update navigation bar mode
+            final int nbMode = mNavigationBarView == null ? -1 : computeBarMode(
+                    oldVal, newVal, mNavigationBarView.getBarTransitions(),
+                    View.NAVIGATION_BAR_TRANSIENT, View.NAVIGATION_BAR_TRANSLUCENT);
+            boolean sbModeChanged = sbMode != -1;
+            boolean nbModeChanged = nbMode != -1;
+            boolean checkBarModes = false;
+            if (sbModeChanged && sbMode != mStatusBarMode) {
+                mStatusBarMode = sbMode;
+                checkBarModes = true;
+            }
+            if (nbModeChanged && nbMode != mNavigationBarMode) {
+                mNavigationBarMode = nbMode;
+                checkBarModes = true;
+            }
+            if (checkBarModes) {
+                checkBarModes();
+            }
+
+            final boolean sbVisible = (newVal & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
+                    || (newVal & View.STATUS_BAR_TRANSIENT) != 0;
+            final boolean nbVisible = (newVal & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0
+                    || (newVal & View.NAVIGATION_BAR_TRANSIENT) != 0;
+
+            sbModeChanged = sbModeChanged && sbVisible;
+            nbModeChanged = nbModeChanged && nbVisible;
+
+
+            if (sbModeChanged || nbModeChanged) {
+                // update transient bar autohide
+                if (sbMode == MODE_SEMI_TRANSPARENT || nbMode == MODE_SEMI_TRANSPARENT) {
+                    scheduleAutohide();
+                } else {
+                    cancelAutohide();
+                }
+            } else if (!sbVisible && !nbVisible) {
+                cancelAutohide();
+            }
 
             // ready to unhide
             if ((vis & View.STATUS_BAR_UNHIDE) != 0) {
@@ -2650,50 +2670,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
         }
         mHandler.removeMessages(msg);
         mHandler.sendEmptyMessage(msg);
-    }
-
-    private void updateBarModes(int oldVal, int newVal) {
-        // update status bar mode
-        final int sbMode = computeBarMode(oldVal, newVal, mStatusBarView.getBarTransitions(),
-                View.STATUS_BAR_TRANSIENT, View.STATUS_BAR_TRANSLUCENT);
-
-        // update navigation bar mode
-        final int nbMode = mNavigationBarView == null ? -1 : computeBarMode(
-                oldVal, newVal, mNavigationBarView.getBarTransitions(),
-                View.NAVIGATION_BAR_TRANSIENT, View.NAVIGATION_BAR_TRANSLUCENT);
-        boolean sbModeChanged = sbMode != -1;
-        boolean nbModeChanged = nbMode != -1;
-        boolean checkBarModes = false;
-        if (sbModeChanged && sbMode != mStatusBarMode) {
-            mStatusBarMode = sbMode;
-            checkBarModes = true;
-        }
-        if (nbModeChanged && nbMode != mNavigationBarMode) {
-            mNavigationBarMode = nbMode;
-            checkBarModes = true;
-        }
-        if (checkBarModes) {
-            checkBarModes();
-        }
-
-        final boolean sbVisible = (newVal & View.SYSTEM_UI_FLAG_FULLSCREEN) == 0
-                || (newVal & View.STATUS_BAR_TRANSIENT) != 0;
-        final boolean nbVisible = (newVal & View.SYSTEM_UI_FLAG_HIDE_NAVIGATION) == 0
-                || (newVal & View.NAVIGATION_BAR_TRANSIENT) != 0;
-
-        sbModeChanged = sbModeChanged && sbVisible;
-        nbModeChanged = nbModeChanged && nbVisible;
-
-        if (sbModeChanged || nbModeChanged) {
-            // update transient bar autohide
-            if (sbMode == MODE_SEMI_TRANSPARENT || nbMode == MODE_SEMI_TRANSPARENT) {
-                scheduleAutohide();
-            } else {
-                cancelAutohide();
-            }
-        } else if (!sbVisible && !nbVisible) {
-            cancelAutohide();
-        }
     }
 
     private int computeBarMode(int oldVis, int newVis, BarTransitions transitions,
@@ -3318,8 +3294,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode {
                 makeExpandedInvisible();
                 notifyNavigationBarScreenOn(false);
                 notifyHeadsUpScreenOn(false);
-                cancelAutohide();
-                doAutoHide(true);
                 finishBarAnimations();
             } else if (Intent.ACTION_SCREEN_ON.equals(action)) {
                 mScreenOn = true;

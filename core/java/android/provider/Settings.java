@@ -2400,6 +2400,12 @@ public final class Settings {
         public static final String HAPTIC_FEEDBACK_ENABLED = "haptic_feedback_enabled";
 
         /**
+         * Minimum vibration duration in milliseconds (0-100ms)
+         * @hide
+         */
+        public static final String MINIMUM_VIBRATION_DURATION = "minimum_vibration_duration";
+
+        /**
          * @deprecated Each application that shows web suggestions should have its own
          * setting for this.
          */
@@ -3246,11 +3252,19 @@ public final class Settings {
                 "lockscreen_quick_unlock_control";
 
         /**
-         * Should the non-intrsive incall ui be used
+         * Whether incomming call UI stays in background
          *
          * @hide
          */
-        public static final String NON_INTRUSIVE_INCALL = "non_intrusive_incall";
+        public static final String CALL_UI_IN_BACKGROUND = "call_ui_in_background";
+
+        /**
+         * Whether flip action during incomming call should mute or dismiss
+         * the call (mute = 0, dismiss = 1, nothing = 2 (default))
+         *
+         * @hide
+         */
+        public static final String CALL_FLIP_ACTION_KEY = "call_flip_action_key";
 
         /**
          * Enable Stylus Gestures
