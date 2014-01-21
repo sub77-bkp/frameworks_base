@@ -179,4 +179,7 @@
   <java-symbol type="string" name="global_action_screen_record" />
   <java-symbol type="bool" name="config_enableScreenrecordChord" />
 
+  <!-- Hardware key rebinding -->
+  <java-symbol type="integer" name="config_deviceHardwareKeys" />
+
 </resources>
