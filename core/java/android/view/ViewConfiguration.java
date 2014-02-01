@@ -296,14 +296,25 @@ public class ViewConfiguration {
         mOverflingDistance = (int) (sizeAndDensity * OVERFLING_DISTANCE + 0.5f);
 
         if (!sHasPermanentMenuKeySet) {
-            IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
-            try {
-                sHasPermanentMenuKey = !wm.hasNavigationBar()
-                        && !context.getResources().getBoolean(
-                                com.android.internal.R.bool.config_force_permanent_menu_key);
-                sHasPermanentMenuKeySet = true;
-            } catch (RemoteException ex) {
+            // The action overflow button within app UI can
+            // be controlled with a system setting
+            int showOverflowButton = Settings.System.getInt(context.getContentResolver(),
+                            Settings.System.UI_FORCE_OVERFLOW_BUTTON, 0);
+
+            if (showOverflowButton == 1) {
+                // Force overflow button on by reporting that
+                // the device has no permanent menu key
                 sHasPermanentMenuKey = false;
+            } else {
+                IWindowManager wm = WindowManagerGlobal.getWindowManagerService();
+                try {
+                    sHasPermanentMenuKey = !wm.hasNavigationBar()
+                            && !context.getResources().getBoolean(
+                                    com.android.internal.R.bool.config_force_permanent_menu_key);
+                    sHasPermanentMenuKeySet = true;
+                } catch (RemoteException ex) {
+                    sHasPermanentMenuKey = false;
+                }
             }
         }
 
