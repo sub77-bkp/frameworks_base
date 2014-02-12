@@ -27,6 +27,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+import java.lang.Exception;
+
 import java.util.Map;
 
 /**
@@ -68,17 +70,15 @@ public class MediaMetadataRetriever
             is = new FileInputStream(path);
             FileDescriptor fd = is.getFD();
             setDataSource(fd, 0, 0x7ffffffffffffffL);
-        } catch (FileNotFoundException fileEx) {
+        } catch (Exception e) {
             throw new IllegalArgumentException();
-        } catch (IOException ioEx) {
-            throw new IllegalArgumentException();
+        } finally {
+            try {
+                if (is != null) {
+                    is.close();
+                }
+            } catch (IOException e) {}
         }
-
-        try {
-            if (is != null) {
-                is.close();
-            }
-        } catch (Exception e) {}
     }
 
     /**
