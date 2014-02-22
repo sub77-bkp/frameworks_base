@@ -148,7 +148,6 @@ void PatchCache::clearGarbage() {
         mSize -= patch->getSize();
 
         mCache.remove(*pair.getFirst());
-        delete patch;
     }
 
 #if DEBUG_PATCHES
