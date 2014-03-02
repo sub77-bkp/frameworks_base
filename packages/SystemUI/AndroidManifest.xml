@@ -127,6 +127,8 @@
                 android:permission="android.permission.BIND_WALLPAPER"
                 android:exported="true" />
 
+        <service android:name=".service.ReminderService"/>
+
         <receiver android:name=".BootReceiver" androidprv:primaryUserOnly="true">
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
@@ -231,6 +233,20 @@
             </intent-filter>
         </activity>
 
+        <!-- Reminder dialog sets -->
+        <activity
+            android:name="com.android.systemui.timedialog.ReminderTimeDialog"
+            android:theme="@android:style/Theme.Holo.Dialog.NoActionBar"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:excludeFromRecents="true"
+            android:taskAffinity="com.android.systemui.timedialog.ReminderTimeDialog"
+            android:launchMode="singleInstance" >
+            <intent-filter>
+                <action android:name="com.android.systemui.timedialog.ReminderTimeDialog" />
+                <category android:name="android.intent.category.DEFAULT" />
+            </intent-filter>
+        </activity>
+
         <!-- Slim shortcut picker -->
         <activity
             android:name="com.android.systemui.CreateShortcut"
@@ -261,19 +277,6 @@
             android:name="com.android.systemui.shortcuts.LastApp"
             android:label="@string/shortcut_last_app"
             android:icon="@drawable/ic_sysbar_lastapp"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="com.android.systemui.SHORTCUT" />
-                <category android:name="com.android.systemui.SHORTCUT_EXTRA" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.android.systemui.shortcuts.PowerMenu"
-            android:label="@string/shortcut_power_menu"
-            android:icon="@drawable/ic_sysbar_power_menu"
             android:theme="@android:style/Theme.NoDisplay"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance" >
@@ -339,19 +342,6 @@
             android:name="com.android.systemui.shortcuts.Screenshot"
             android:label="@string/shortcut_screenshot"
             android:icon="@drawable/ic_sysbar_screenshot"
-            android:theme="@android:style/Theme.NoDisplay"
-            android:excludeFromRecents="true"
-            android:launchMode="singleInstance" >
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="com.android.systemui.SHORTCUT" />
-                <category android:name="com.android.systemui.SHORTCUT_EXTRA" />
-            </intent-filter>
-        </activity>
-        <activity
-            android:name="com.android.systemui.shortcuts.SleepScreen"
-            android:label="@string/shortcut_screensleep"
-            android:icon="@drawable/ic_qs_sleep"
             android:theme="@android:style/Theme.NoDisplay"
             android:excludeFromRecents="true"
             android:launchMode="singleInstance" >

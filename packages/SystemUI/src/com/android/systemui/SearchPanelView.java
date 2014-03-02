@@ -26,6 +26,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.pm.PackageManager;
+import android.content.pm.PackageManager.NameNotFoundException;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.graphics.drawable.BitmapDrawable;
@@ -71,6 +72,7 @@ import com.android.systemui.statusbar.phone.KeyguardTouchDelegate;
 import com.android.systemui.statusbar.phone.PhoneStatusBar;
 
 import java.io.File;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 
 public class SearchPanelView extends FrameLayout implements
@@ -404,10 +406,13 @@ public class SearchPanelView extends FrameLayout implements
         int startPosOffset;
         ButtonConfig buttonConfig;
 
-        if (isScreenPortrait()
-            || Settings.System.getIntForUser(mContext.getContentResolver(),
-                   Settings.System.NAVIGATION_BAR_CAN_MOVE,
-                   DeviceUtils.isPhone(mContext) ? 1 : 0, UserHandle.USER_CURRENT) != 1) {
+        boolean navigationBarCanMove = DeviceUtils.isPhone(mContext) ?
+                Settings.System.getIntForUser(mContext.getContentResolver(),
+                    Settings.System.NAVIGATION_BAR_CAN_MOVE, 1,
+                    UserHandle.USER_CURRENT) == 1
+                : false;
+
+        if (isScreenPortrait() || !navigationBarCanMove) {
             startPosOffset = 1;
             endPosOffset = (mButtonsConfig.size()) + 1;
         } else {
@@ -456,19 +461,6 @@ public class SearchPanelView extends FrameLayout implements
                 mResources, mResources.getDrawable(R.drawable.ic_navbar_placeholder));
             blankDrawable.setEnabled(false);
             return blankDrawable;
-        }
-
-        if (!action.startsWith("**") && pm != null) {
-            mAppIsBinded = true;
-            try {
-                Intent in = Intent.parseUri(action, 0);
-                aInfo = in.resolveActivityInfo(pm, PackageManager.GET_ACTIVITIES);
-                if (aInfo == null) {
-                    return noneDrawable;
-                }
-            } catch (Exception e) {
-                return noneDrawable;
-            }
         }
 
         if (customIconUri != null && !customIconUri.equals(ButtonsConstants.ICON_EMPTY)
@@ -548,9 +540,28 @@ public class SearchPanelView extends FrameLayout implements
             return new TargetDrawable(
                 mResources, com.android.internal.R.drawable.ic_action_assist_generic);
 
-        if (aInfo != null && pm != null) {
-            return new TargetDrawable(mResources,
-                setStateListDrawable(ImageHelper.resize(mContext, aInfo.loadIcon(pm), 50)));
+        if (!action.startsWith("**") && pm != null) {
+            try {
+                mAppIsBinded = true;
+                Drawable d = null;
+                String extraIconPath = action.replaceAll(".*?hasExtraIcon=", "");
+                if (extraIconPath != null && !extraIconPath.isEmpty()) {
+                    File f = new File(Uri.parse(extraIconPath).getPath());
+                    if (f.exists()) {
+                        d = new BitmapDrawable(mContext.getResources(),
+                                f.getAbsolutePath());
+                    }
+                }
+                if (d == null) {
+                    d = pm.getActivityIcon(Intent.parseUri(action, 0));
+                }
+                return new TargetDrawable(mResources,
+                        setStateListDrawable(ImageHelper.resize(mContext, d, 50)));
+            } catch (NameNotFoundException e) {
+                e.printStackTrace();
+            } catch (URISyntaxException e) {
+                e.printStackTrace();
+            }
         }
         return noneDrawable;
     }

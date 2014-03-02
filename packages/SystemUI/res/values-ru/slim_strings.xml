@@ -17,6 +17,7 @@
     <string name="accessibility_data_connection_HP">HSPA+</string>
     <string name="quick_settings_gps">GPS</string>
     <string name="quick_settings_gps_off">GPS выкл</string>
+    <string name="quick_settings_screen_sleep">Потушить экран</string>
     <string name="quick_settings_ringer_on">Звук вкл</string>
     <string name="quick_settings_ringer_off">Звук выкл</string>
     <string name="quick_settings_vibration_on">Вибрация вкл</string>
@@ -29,6 +30,11 @@
     <string name="quick_settings_report_bug">Сообщить ошибку</string>
     <string name="quick_settings_music_play">Играть</string>
     <string name="quick_settings_music_pause">Пауза</string>
+    <string name="quick_settings_music_schedule_title">Таймер сна</string>
+    <string name="quick_settings_music_schedule_in_progress">Таймер запущен</string>
+    <string name="quick_settings_music_schedule_start">Запустить таймер</string>
+    <string name="quick_settings_music_schedule_cancel">Сбросить таймер</string>
+    <string name="quick_settings_music_schedule_update">Обновить таймер</string>
     <string name="quick_settings_reboot">Перезагрузить</string>
     <string name="quick_settings_reboot_recovery">В рекавери</string>
     <string name="quick_settings_sync">Синхро</string>
@@ -65,9 +71,7 @@
     <string name="shortcut_reboot">Перезагрузка</string>
     <string name="shortcut_recovery">В рекавери</string>
     <string name="shortcut_last_app">Предыдущее приложение</string>
-    <string name="shortcut_power_menu">Меню управления питанием</string>
     <string name="shortcut_screenshot">Снимок экрана</string>
-    <string name="shortcut_screensleep">Потушить экран</string>
     <string name="shortcut_volume">Громкость</string>
     <string name="shortcut_toggle_title">Действие</string>
 
@@ -98,5 +102,25 @@
     <string name="quick_settings_quick_record_play">Воспроизводится...</string>
     <string name="quick_settings_custom_toggle">Свой ярлык</string>
     <string name="quick_settings_contact_toggle">Контакт</string>
+    <string name="quick_settings_reminder">Напоминание</string>
+    <string name="quick_settings_reminder_title">Название:</string>
+    <string name="quick_settings_reminder_message">Сообщение:</string>
+    <string name="quick_settings_reminder_time">Время напоминания</string>
+    <string name="quick_settings_reminder_set">Установить время</string>
+    <string name="quick_settings_reminder_update">Обновить время</string>
+    <string name="quick_settings_reminder_no_expire">Нет уведомления</string>
+    <string name="quick_settings_reminder_dismiss">Удалить напоминание</string>
+    <string name="quick_settings_reminder_dismiss_message">Удалить текущее напоминание?</string>
+    <string name="quick_settings_reminder_help_title">Касание:</string>
+    <string name="quick_settings_reminder_help_message">Коснитесь здесь, чтобы установить напоминание. Долгое нажатие удалит текущее напоминание.</string>
 
+    <!-- Battery status in pie controls -->
+    <string name="pie_battery_status_charging">Заряжается (<xliff:g id="percent">%d</xliff:g>%%)</string>
+    <string name="pie_battery_status_full">Заряжено</string>
+    <string name="pie_battery_status_discharging"><xliff:g id="percent">%d</xliff:g>%% осталось</string>
+
+    <!-- Phone status in pie controls -->
+    <string name="pie_phone_status_no_service">Вне зоны обслуживания</string>
+    <string name="pie_phone_status_airplane_mode">Включен режим полета</string>
+    <string name="pie_phone_status_emergency_only">Только экстренные вызовы</string>
 </resources>

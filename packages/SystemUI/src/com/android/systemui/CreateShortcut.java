@@ -43,6 +43,7 @@ import java.lang.Character;
 import java.lang.CharSequence;
 import java.lang.IllegalArgumentException;
 import java.lang.NumberFormatException;
+import java.lang.StringBuilder;
 
 public class CreateShortcut extends LauncherActivity {
 
@@ -102,6 +103,7 @@ public class CreateShortcut extends LauncherActivity {
             showDialogSetting(DLG_SECRET);
         } else if (className.equals("Immersive")
                 || className.equals("QuietHours")
+                || className.equals("Torch")
                 || className.equals("Rotation")) {
             showDialogSetting(DLG_TOGGLE);
         } else {
@@ -120,16 +122,12 @@ public class CreateShortcut extends LauncherActivity {
             return R.drawable.ic_qs_torch_on;
         } else if (c.equals("LastApp")) {
             return R.drawable.ic_sysbar_lastapp;
-        } else if (c.equals("PowerMenu")) {
-            return R.drawable.ic_sysbar_power_menu;
         } else if (c.equals("Reboot")) {
             return R.drawable.ic_qs_reboot;
         } else if (c.equals("Recovery")) {
             return R.drawable.ic_qs_reboot_recovery;
         } else if (c.equals("Screenshot")) {
             return R.drawable.ic_sysbar_screenshot;
-        } else if (c.equals("SleepScreen")) {
-            return R.drawable.ic_qs_sleep;
         } else if (c.equals("VolumePanel")) {
             return R.drawable.ic_qs_volume;
         } else if (c.equals("ChamberOfSecrets")) {
@@ -297,48 +295,60 @@ public class CreateShortcut extends LauncherActivity {
                         str = str.replaceAll("\\s+", "");
                         String[] strArray = str.split(",");
                         boolean resultOk = true;
-
-                        switch (mSettingType) {
-                            case SYSTEM_INT:
-                            case SECURE_INT:
-                                int[] intArray = new int[strArray.length];
-                                for (int i = 0; i < strArray.length; i++) {
-                                    try {
-                                        intArray[i] = Integer.parseInt(strArray[i]);
-                                    } catch (NumberFormatException e) {
+                        if (strArray.length >= 1 && str.length() > 0) {
+                            switch (mSettingType) {
+                                case SYSTEM_INT:
+                                case SECURE_INT:
+                                    int[] intArray = new int[strArray.length];
+                                    for (int i = 0; i < strArray.length; i++) {
                                         try {
-                                            intArray[i] = Color.parseColor(strArray[i]);
-                                        } catch (IllegalArgumentException ex) {
+                                            intArray[i] = Integer.parseInt(strArray[i]);
+                                        } catch (NumberFormatException e) {
+                                            try {
+                                                intArray[i] = Color.parseColor(strArray[i]);
+                                                // Let's avoid color parsing a seond time.
+                                                strArray[i] = Integer.toString(
+                                                        Color.parseColor(strArray[i]));
+                                            } catch (IllegalArgumentException ex) {
+                                                resultOk = false;
+                                            }
+                                        }
+                                    }
+                                    break;
+                                case SYSTEM_LONG:
+                                case SECURE_LONG:
+                                    long[] longArray = new long[strArray.length];
+                                    for (int i = 0; i < strArray.length; i++) {
+                                        try {
+                                            longArray[i] = Long.parseLong(strArray[i]);
+                                        } catch (NumberFormatException e) {
                                             resultOk = false;
                                         }
                                     }
-                                }
-                                break;
-                            case SYSTEM_LONG:
-                            case SECURE_LONG:
-                                long[] longArray = new long[strArray.length];
-                                for (int i = 0; i < strArray.length; i++) {
-                                    try {
-                                        longArray[i] = Long.parseLong(strArray[i]);
-                                    } catch (NumberFormatException e) {
-                                        resultOk = false;
+                                    break;
+                                case SYSTEM_FLOAT:
+                                case SECURE_FLOAT:
+                                    float[] floatArray = new float[strArray.length];
+                                    for (int i = 0; i < strArray.length; i++) {
+                                        try {
+                                            floatArray[i] = Float.parseFloat(strArray[i]);
+                                        } catch (NumberFormatException ex) {
+                                            resultOk = false;
+                                        }
                                     }
-                                }
-                                break;
-                            case SYSTEM_FLOAT:
-                            case SECURE_FLOAT:
-                                float[] floatArray = new float[strArray.length];
-                                for (int i = 0; i < strArray.length; i++) {
-                                    try {
-                                        floatArray[i] = Float.parseFloat(strArray[i]);
-                                    } catch (NumberFormatException ex) {
-                                        resultOk = false;
-                                    }
-                                }
-                                break;
+                                    break;
+                            }
+                        } else {
+                            resultOk = false;
                         }
 
                         if (resultOk) {
+                            // Rebuild string with ints needed if color values are used.
+                            StringBuilder builder = new StringBuilder();
+                            for(String st : strArray) {
+                                builder.append(st + ",");
+                            }
+                            str = builder.toString();
                             // Set to string.  Launcher doesn't persist array
                             // extras after a reboot.
                             setSettingArray(str);
