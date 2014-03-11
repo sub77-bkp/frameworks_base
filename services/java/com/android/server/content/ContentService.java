@@ -47,6 +47,7 @@ import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.Iterator;
 import java.util.List;
 
 /**
@@ -181,8 +182,6 @@ public final class ContentService extends IContentService.Stub {
         synchronized (mRootNode) {
             mRootNode.addObserverLocked(uri, observer, notifyForDescendants, mRootNode,
                     Binder.getCallingUid(), Binder.getCallingPid(), userHandle);
-            if (false) Log.v(TAG, "Registered observer " + observer + " at " + uri +
-                    " with notifyForDescendants " + notifyForDescendants);
         }
     }
 
@@ -736,8 +735,18 @@ public final class ContentService extends IContentService.Stub {
                 int uid, int pid, int userHandle) {
             // If this is the leaf node add the observer
             if (index == countUriSegments(uri)) {
+                Iterator<ObserverEntry> iter = mObservers.iterator();
+                while(iter.hasNext()) {
+                    ObserverEntry next = iter.next();
+                    if(next.observer.asBinder() == observer.asBinder()) {
+                         Log.w(TAG, "Observer " + observer + " is already registered.");
+                         return;
+                    }
+                }
                 mObservers.add(new ObserverEntry(observer, notifyForDescendants, observersLock,
                         uid, pid, userHandle));
+                if (false) Log.v(TAG, "Registered observer " + observer + " at " + uri +
+                        " with notifyForDescendants " + notifyForDescendants);
                 return;
             }
 
