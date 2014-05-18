@@ -67,4 +67,9 @@ interface IPowerManager
 
     void setKeyboardVisibility(boolean visible);
     void setKeyboardLight(boolean on, int key);
+
+    boolean setPowerProfile(String profile);
+    String getPowerProfile();
+
+    void activityResumed(String componentName);
 }
