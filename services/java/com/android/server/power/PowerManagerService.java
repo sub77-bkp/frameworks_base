@@ -168,9 +168,6 @@ public final class PowerManagerService extends IPowerManager.Stub
     // effectively and terminate the dream.
     private static final int DREAM_BATTERY_LEVEL_DRAIN_CUTOFF = 5;
 
-    // Max time (microseconds) to allow a CPU boost for
-    private static final int MAX_CPU_BOOST_TIME = 5000000;
-
     private Context mContext;
     private LightsService mLightsService;
     private BatteryService mBatteryService;
@@ -400,7 +397,6 @@ public final class PowerManagerService extends IPowerManager.Stub
     private static native void nativeReleaseSuspendBlocker(String name);
     private static native void nativeSetInteractive(boolean enable);
     private static native void nativeSetAutoSuspend(boolean enable);
-    private static native void nativeCpuBoost(int duration);
     private boolean mKeyboardVisible = false;
 
     public PowerManagerService() {
@@ -2033,20 +2029,6 @@ public final class PowerManagerService extends IPowerManager.Stub
             shutdownOrRebootInternal(true, confirm, null, wait);
         } finally {
             Binder.restoreCallingIdentity(ident);
-        }
-    }
-
-    /**
-     * Boost the CPU
-     * @param duration Duration to boost the CPU for, in milliseconds.
-     * @hide
-     */
-    @Override // Binder call
-    public void cpuBoost(int duration) {
-        if (duration > 0 && duration <= MAX_CPU_BOOST_TIME) {
-            nativeCpuBoost(duration);
-        } else {
-            Log.e(TAG, "Invalid boost duration: " + duration);
         }
     }
 
