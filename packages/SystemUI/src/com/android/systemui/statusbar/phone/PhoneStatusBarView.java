@@ -70,6 +70,7 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mNotificationPanel, mSettingsPanel;
     private boolean mShouldFade;
     private GestureDetector mDoubleTapGesture;
+    private boolean mDoubeTapGestureEnabled;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -87,6 +88,8 @@ public class PhoneStatusBarView extends PanelBar {
 
         updateSettings();
 
+        mDoubeTapGestureEnabled = !mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_disableDoubleTapSleepGesture);
         mDoubleTapGesture = new GestureDetector(mContext,
                 new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -257,8 +260,7 @@ public class PhoneStatusBarView extends PanelBar {
             }
         }
 
-        if (!mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_disableDoubleTapSleepGesture)) {
+        if (mDoubeTapGestureEnabled) {
             mDoubleTapGesture.onTouchEvent(event);
         }
 
