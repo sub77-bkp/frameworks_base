@@ -2998,7 +2998,7 @@ bool ResTable::getResourceName(uint32_t resID, resource_name* outName) const
 
     if (p < 0) {
         if (Res_GETPACKAGE(resID)+1 == 0) {
-            ALOGW("No package identifier when getting name for resource number 0x%08x", resID);
+            ALOGV("No package identifier when getting name for resource number 0x%08x", resID);
         } else {
             ALOGW("No known package when getting name for resource number 0x%08x", resID);
         }
