@@ -347,21 +347,20 @@ android_media_MediaScanner_extractAlbumArt(
     }
 
     int fd = jniGetFDFromFileDescriptor(env, fileDescriptor);
-    char* data = mp->extractAlbumArt(fd);
-    if (!data) {
+    MediaAlbumArt* mediaAlbumArt = mp->extractAlbumArt(fd);
+    if (mediaAlbumArt == NULL) {
         return NULL;
     }
-    long len = *((long*)data);
 
-    jbyteArray array = env->NewByteArray(len);
+    jbyteArray array = env->NewByteArray(mediaAlbumArt->size());
     if (array != NULL) {
-        jbyte* bytes = env->GetByteArrayElements(array, NULL);
-        memcpy(bytes, data + 4, len);
-        env->ReleaseByteArrayElements(array, bytes, 0);
+        const jbyte* data =
+                reinterpret_cast<const jbyte*>(mediaAlbumArt->data());
+        env->SetByteArrayRegion(array, 0, mediaAlbumArt->size(), data);
     }
 
 done:
-    free(data);
+    free(mediaAlbumArt);
     // if NewByteArray() returned NULL, an out-of-memory
     // exception will have been raised. I just want to
     // return null in that case.
