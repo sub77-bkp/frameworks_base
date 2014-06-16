@@ -659,12 +659,23 @@ public class RecentPanelView {
             // Never load the current home activity.
             if (isCurrentHomeActivity(intent.getComponent(), homeInfo)) {
                 loadOneExcluded = false;
+
+                //We're on Homescreen, so restore expanded state of last topmost task
+                mTaskToRestore = mLastTopmostTask;
+                mStateToRestore = mLastTopmostExpandedState;
+                mLastTopmostTask = null;
+
                 continue;
             }
 
             // Don't load excluded activities.
             if (!loadOneExcluded && (recentInfo.baseIntent.getFlags()
                     & Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS) != 0) {
+
+                mTaskToRestore = mLastTopmostTask;
+                mStateToRestore = mLastTopmostExpandedState;
+                mLastTopmostTask = null;
+
                 continue;
             }
 
@@ -705,24 +716,28 @@ public class RecentPanelView {
                             oldState |= EXPANDED_STATE_BY_SYSTEM;
                         }
                         //Handle expanded state of topmost task:
-                        //Topmost Task is always shown collapsed, we're saving its expanded state and restore it later
+                        //Topmost Task is always shown collapsed,
+                        //we're saving its expanded state and restore it later
                         if (i == 0) {
                             if (mLastTopmostTask == null) {
                                 //No topmost task saved, do this now...
                                 mLastTopmostTask = item;
                                 mLastTopmostExpandedState = oldState;
                             } else if (!mLastTopmostTask.identifier.equals(mFirstTask.identifier)) {
-                                //Topmost task has changed! Restore the state of the last one in one of the next loop iterations...
+                                //Topmost task has changed! Restore the state of the last one
+                                //in one of the next loop iterations...
                                 mTaskToRestore = mLastTopmostTask;
                                 mStateToRestore = mLastTopmostExpandedState;
 
-                                //item holds our new topmost task, save the item and its expanded state...
+                                //item holds our new topmost task,
+                                //save the item and its expanded state...
                                 mLastTopmostTask = item;
                                 mLastTopmostExpandedState = oldState;
                             }
                             //now set the state of topmost task to collapsed
                             item.setExpandedState(EXPANDED_STATE_COLLAPSED);
-                        } else if ((mTaskToRestore != null) && (item.identifier.equals(mTaskToRestore.identifier))) {
+                        } else if ((mTaskToRestore != null)
+                                && (item.identifier.equals(mTaskToRestore.identifier))) {
                             item.setExpandedState(mStateToRestore);
                             mTaskToRestore = null;
                         } else {
