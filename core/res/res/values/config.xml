@@ -1960,4 +1960,10 @@
     <!-- Configuration to enable non-default PDP during IWLAN -->
     <bool name="config_feature_iwlan_enabled">false</bool>
 
+    <!-- Default value for proximity check on screen wake
+         NOTE ! - Enable for devices that have a fast response proximity sensor (ideally < 300ms)
+    -->
+    <bool name="config_proximityCheckOnWake">false</bool>
+    <integer name="config_proximityCheckTimeout">250</integer>
+
 </resources>
