@@ -3630,6 +3630,8 @@ public final class Settings {
          * by a single controller to update all settings values simultaneiously.
          * This is stored in minutes from the start of the day.
          * 0 - 6 are parsed and compared to Sunday (1) through Saturday (7)
+         * 7 - 13 are parsed and compared to Sunday through Saturday
+         * for additional day times (work/weekend-scheduling/etc).
          * @hide
          */
         public static final String[] QUIET_HOURS_START_TIMES = new String[] {
@@ -3639,7 +3641,14 @@ public final class Settings {
             "quiet_hours_start_times_wed",
             "quiet_hours_start_times_thurs",
             "quiet_hours_start_times_fri",
-            "quiet_hours_start_times_sat"
+            "quiet_hours_start_times_sat",
+            "quiet_hours_start_times_sun_extra",
+            "quiet_hours_start_times_mon_extra",
+            "quiet_hours_start_times_tues_extra",
+            "quiet_hours_start_times_wed_extra",
+            "quiet_hours_start_times_thurs_extra",
+            "quiet_hours_start_times_fri_extra",
+            "quiet_hours_start_times_sat_extra"
         };
 
         /**
@@ -3647,6 +3656,8 @@ public final class Settings {
          * by a single controller to update all settings values simultaneiously.
          * This is stored in minutes from the start of the day.
          * 0 - 6 are parsed and compared to Sunday (1) through Saturday (7)
+         * 7 - 13 are parsed and compared to Sunday through Saturday
+         * for additional day times (work/weekend-scheduling/etc).
          * @hide
          */
         public static final String[] QUIET_HOURS_END_TIMES = new String[] {
@@ -3656,7 +3667,14 @@ public final class Settings {
             "quiet_hours_end_times_wed",
             "quiet_hours_end_times_thurs",
             "quiet_hours_end_times_fri",
-            "quiet_hours_end_times_sat"
+            "quiet_hours_end_times_sat",
+            "quiet_hours_end_times_sun_extra",
+            "quiet_hours_end_times_mon_extra",
+            "quiet_hours_end_times_tues_extra",
+            "quiet_hours_end_times_wed_extra",
+            "quiet_hours_end_times_thurs_extra",
+            "quiet_hours_end_times_fri_extra",
+            "quiet_hours_end_times_sat_extra"
         };
 
         /**
