@@ -17,10 +17,16 @@
 package com.android.systemui.statusbar.phone;
 
 import android.app.ActivityManager;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.res.Resources;
 import android.content.res.Resources.NotFoundException;
+import android.database.ContentObserver;
+import android.os.Handler;
 import android.os.PowerManager;
+import android.os.UserHandle;
+import android.provider.Settings;
+import android.provider.Settings.System;
 import android.util.AttributeSet;
 import android.util.EventLog;
 import android.util.Log;
@@ -47,10 +53,15 @@ public class PhoneStatusBarView extends PanelBar {
     PanelView mFadingPanel = null;
     PanelView mLastFullyOpenedPanel = null;
     PanelView mNotificationPanel, mSettingsPanel;
+
+    private SettingsObserver mSettingsObserver;
+    private boolean mAttached = false;
+
     private boolean mShouldFade;
     private final PhoneStatusBarTransitions mBarTransitions;
     private GestureDetector mDoubleTapGesture;
     private boolean mDoubeTapGestureEnabled;
+    private boolean mConfigDoubleTapGestureEnabled;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -67,8 +78,11 @@ public class PhoneStatusBarView extends PanelBar {
         mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
         mBarTransitions = new PhoneStatusBarTransitions(this);
 
-        mDoubeTapGestureEnabled = !mContext.getResources().getBoolean(
+        mConfigDoubleTapGestureEnabled = !mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_disableDoubleTapSleepGesture);
+
+        mDoubeTapGestureEnabled = getDoubleTapGestureSetting();
+
         mDoubleTapGesture = new GestureDetector(mContext,
                 new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -102,6 +116,12 @@ public class PhoneStatusBarView extends PanelBar {
             pv.setRubberbandingEnabled(!mFullWidthNotifications);
         }
         mBarTransitions.init();
+
+        if (!mAttached) {
+            mAttached = true;
+            mSettingsObserver = new SettingsObserver(new Handler());
+            mSettingsObserver.observe();
+        }
     }
 
     @Override
@@ -113,6 +133,15 @@ public class PhoneStatusBarView extends PanelBar {
             mSettingsPanel = pv;
         }
         pv.setRubberbandingEnabled(!mFullWidthNotifications);
+    }
+
+    @Override
+    protected void onDetachedFromWindow() {
+        super.onDetachedFromWindow();
+        if (mAttached) {
+            mAttached = false;
+            mContext.getContentResolver().unregisterContentObserver(mSettingsObserver);
+        }
     }
 
     @Override
@@ -291,5 +320,32 @@ public class PhoneStatusBarView extends PanelBar {
         mBar.animateHeadsUp(mNotificationPanel == panel, mPanelExpandedFractionSum);
         mBar.panelIsAnimating(mFullyOpenedPanel == null);
 
+    }
+
+    private boolean getDoubleTapGestureSetting() {
+        return Settings.System.getIntForUser(
+                mContext.getContentResolver(),
+                Settings.System.STATUSBAR_DOUBLE_TAP_GESTURE,
+                mConfigDoubleTapGestureEnabled ? 1 : 0,
+                UserHandle.USER_CURRENT) == 1;
+    }
+
+    class SettingsObserver extends ContentObserver {
+        SettingsObserver(Handler handler) {
+            super(handler);
+        }
+
+        void observe() {
+            // Observe all users' changes
+            ContentResolver resolver = mContext.getContentResolver();
+            resolver.registerContentObserver(Settings.System.getUriFor(
+                    Settings.System.STATUSBAR_DOUBLE_TAP_GESTURE), false, this,
+                    UserHandle.USER_ALL);
+        }
+
+        @Override
+        public void onChange(boolean selfChange) {
+            mDoubeTapGestureEnabled = getDoubleTapGestureSetting();
+        }
     }
 }
