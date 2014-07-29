@@ -32,6 +32,7 @@ import android.os.UserHandle;
 import android.provider.Settings;
 import android.util.AttributeSet;
 import android.util.EventLog;
+import android.util.Log;
 import android.util.Slog;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -71,6 +72,7 @@ public class PhoneStatusBarView extends PanelBar {
     private boolean mShouldFade;
     private GestureDetector mDoubleTapGesture;
     private boolean mDoubeTapGestureEnabled;
+    private boolean mConfigDoubleTapGestureEnabled;
 
     public PhoneStatusBarView(Context context, AttributeSet attrs) {
         super(context, attrs);
@@ -86,10 +88,11 @@ public class PhoneStatusBarView extends PanelBar {
         }
         mFullWidthNotifications = mSettingsPanelDragzoneFrac <= 0f;
 
+        mConfigDoubleTapGestureEnabled = !mContext.getResources().getBoolean(
+                com.android.internal.R.bool.config_disableDoubleTapSleepGesture);
+
         updateSettings();
 
-        mDoubeTapGestureEnabled = !mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_disableDoubleTapSleepGesture);
         mDoubleTapGesture = new GestureDetector(mContext,
                 new GestureDetector.SimpleOnGestureListener() {
             @Override
@@ -403,6 +406,9 @@ public class PhoneStatusBarView extends PanelBar {
             resolver.registerContentObserver(
                     Settings.System.getUriFor(Settings.System.STATUS_NAV_BAR_COLOR_MODE),
                     false, this, UserHandle.USER_ALL);
+            resolver.registerContentObserver(
+                    Settings.System.getUriFor(Settings.System.STATUSBAR_DOUBLE_TAP_GESTURE),
+                    false, this, UserHandle.USER_ALL);
         }
 
         @Override
@@ -417,6 +423,9 @@ public class PhoneStatusBarView extends PanelBar {
                 Settings.System.STATUS_BAR_COLOR, -2, UserHandle.USER_CURRENT);
         mColorMode = Settings.System.getIntForUser(resolver,
                 Settings.System.STATUS_NAV_BAR_COLOR_MODE, 1, UserHandle.USER_CURRENT) == 1;
+        mDoubeTapGestureEnabled = Settings.System.getIntForUser(resolver,
+                Settings.System.STATUSBAR_DOUBLE_TAP_GESTURE, mConfigDoubleTapGestureEnabled ? 1 : 0,
+                UserHandle.USER_CURRENT) == 1;
 
         if (!mBackgroundAttached) {
             attachBackground();

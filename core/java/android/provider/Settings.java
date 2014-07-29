@@ -3254,6 +3254,12 @@ public final class Settings {
         */
         public static final String STATUSBAR_CLOCK_DATE_FORMAT = "statusbar_clock_date_format";
 
+        /**
+        * @hide
+        * Double tap gesture on status bar
+        */
+        public static final String STATUSBAR_DOUBLE_TAP_GESTURE = "statusbar_double_tap_gesture";
+
          /**
          * Whether to control brightness from status bar
          *
