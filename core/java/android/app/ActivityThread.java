@@ -4025,18 +4025,16 @@ public final class ActivityThread {
 
         Configuration tmpConfig = null;
 
-        Iterator<Map.Entry<ResourcesKey, WeakReference<Resources>>> it =
-                mActiveResources.entrySet().iterator();
-        while (it.hasNext()) {
-            Map.Entry<ResourcesKey, WeakReference<Resources>> entry = it.next();
-            Resources r = entry.getValue().get();
+        for (int i=mActiveResources.size()-1; i>=0; i--) {
+            ResourcesKey key = mActiveResources.keyAt(i);
+            Resources r = mActiveResources.valueAt(i).get();
             if (r != null) {
                 if (DEBUG_CONFIGURATION) Slog.v(TAG, "Changing resources "
                         + r + " config to: " + config);
-                int displayId = entry.getKey().mDisplayId;
+                int displayId = key.mDisplayId;
                 boolean isDefaultDisplay = (displayId == Display.DEFAULT_DISPLAY);
                 DisplayMetrics dm = defaultDisplayMetrics;
-                Configuration overrideConfig = entry.getKey().mOverrideConfiguration;
+                Configuration overrideConfig = key.mOverrideConfiguration;
                 boolean themeChanged = (changes & ActivityInfo.CONFIG_THEME_RESOURCE) != 0;
                 if (themeChanged) {
                     AssetManager am = r.getAssets();
@@ -4070,7 +4068,7 @@ public final class ActivityThread {
                 //        + " " + r + ": " + r.getConfiguration());
             } else {
                 //Slog.i(TAG, "Removing old resources " + v.getKey());
-                it.remove();
+                mActiveResources.removeAt(i);
             }
         }
         

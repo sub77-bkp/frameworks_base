@@ -252,6 +252,16 @@ public final class ArrayMap<K, V> implements Map<K, V> {
         mSize = 0;
     }
 
+    /**
+     * Create a new ArrayMap with the mappings from the given ArrayMap.
+     */
+    public ArrayMap(ArrayMap map) {
+        this();
+        if (map != null) {
+            putAll(map);
+        }
+    }
+
     private ArrayMap(boolean immutable) {
         mHashes = EMPTY_IMMUTABLE_INTS;
         mArray = ContainerHelpers.EMPTY_OBJECTS;
@@ -295,9 +305,9 @@ public final class ArrayMap<K, V> implements Map<K, V> {
             final int[] ohashes = mHashes;
             final Object[] oarray = mArray;
             allocArrays(minimumCapacity);
-            if (mHashes.length > 0) {
-                System.arraycopy(ohashes, 0, mHashes, 0, mHashes.length);
-                System.arraycopy(oarray, 0, mArray, 0, mArray.length);
+            if (mSize > 0) {
+                System.arraycopy(ohashes, 0, mHashes, 0, mSize);
+                System.arraycopy(oarray, 0, mArray, 0, mSize<<1);
             }
             freeArrays(ohashes, oarray, mSize);
         }
