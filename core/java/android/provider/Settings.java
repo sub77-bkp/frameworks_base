@@ -3860,7 +3860,7 @@ public final class Settings {
          * 1 = force on
          * @hide
          */
-        public static final String UI_FORCE_OVERFLOW_BUTTON = "ui_force_overflow_button";
+        public static final String UI_OVERFLOW_BUTTON = "ui_overflow_button";
 
         /**
          * Action to perform when the back key is pressed (default: ACTION_BACK)
