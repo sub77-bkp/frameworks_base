@@ -202,7 +202,10 @@ public class Tethering extends INetworkManagementEventObserver.Stub {
 
         int activeNetType = ConnectivityManager.TYPE_NONE;
         try {
-            activeNetType = cm.getActiveNetworkInfo().getType();
+            NetworkInfo networkInfo = cm.getActiveNetworkInfo();
+            if (networkInfo != null) {
+                activeNetType = networkInfo.getType();
+            }
         } catch (Exception e) {
             Log.d(TAG, "exception when get active network info:" + e);
         }
