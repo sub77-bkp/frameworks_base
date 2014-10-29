@@ -1206,7 +1206,9 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 handleShow();
                 break;
             case MESSAGE_REFRESH_AIRPLANEMODE:
-                mAirplaneModeOn.updateState(mAirplaneState);
+                if (mAirplaneModeOn != null) {
+                    mAirplaneModeOn.updateState(mAirplaneState);
+                }
                 mAdapter.notifyDataSetChanged();
                 break;
             }
