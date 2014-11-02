@@ -135,4 +135,12 @@
 
   <java-symbol type="bool" name="config_doze_enabled_by_default" />
 
+  <!-- Proximity check on screen on -->
+  <java-symbol type="bool" name="config_proximityCheckOnWake" />
+
+  <!-- Proximity check timeout -->
+  <java-symbol type="integer" name="config_proximityCheckTimeout" />
+
+  <java-symbol type="string" name="usb_choose_notification_title" />
+
 </resources>
