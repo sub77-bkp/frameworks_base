@@ -2282,4 +2282,7 @@
     <string-array name="config_forceEnabledComponents" translatable="false">
     </string-array>
 
+    <!-- Ignored sms packages -->
+    <string-array name="config_ignored_sms_packages"></string-array>
+
 </resources>
