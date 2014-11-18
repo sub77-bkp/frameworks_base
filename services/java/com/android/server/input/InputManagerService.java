@@ -482,6 +482,7 @@ public class InputManagerService extends IInputManager.Stub
     public void setInputFilter(IInputFilter filter) {
         synchronized (mInputFilterLock) {
             final IInputFilter oldFilter = mInputFilter;
+            mInputFilter = filter;
             if (oldFilter == filter) {
                 return; // nothing to do
             }
