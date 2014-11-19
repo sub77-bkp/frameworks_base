@@ -3135,6 +3135,12 @@ public final class Settings {
         public static final String DOUBLE_TAP_SLEEP_GESTURE = "double_tap_sleep_gesture";
 
         /**
+         * Status bar battery %
+         * @hide
+         */
+        public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
@@ -3200,6 +3206,7 @@ public final class Settings {
             VIBRATE_WHEN_RINGING,
             RINGTONE,
             NOTIFICATION_SOUND
+            STATUS_BAR_SHOW_BATTERY_PERCENT,
         };
 
         /**
