@@ -3563,6 +3563,11 @@ public final class Settings {
         public static final String STATUS_BAR_SHOW_BATTERY_PERCENT = "status_bar_show_battery_percent";
 
         /**
+         * Boolean value on whether to show weather in the statusbar
+         */
+        public static final String STATUS_BAR_SHOW_WEATHER = "status_bar_show_weather";
+
+        /**
          * Locale for secondary overlay on dialer for t9 search input
          * @hide
          */
