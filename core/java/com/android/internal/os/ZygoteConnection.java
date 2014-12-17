@@ -37,8 +37,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import libcore.io.IoUtils;
-import android.os.SystemClock;
-import android.util.Slog;
 
 /**
  * A connection that can make spawn requests.
@@ -105,23 +103,11 @@ class ZygoteConnection {
     }
 
     /**
-     * Temporary hack: check time since start time and log if over a fixed threshold.
-     *
-     */
-    private void checkTime(long startTime, String where) {
-        long now = SystemClock.elapsedRealtime();
-        if ((now-startTime) > 1000) {
-            // If we are taking more than a second, log about it.
-            Slog.w(TAG, "Slow operation: " + (now-startTime) + "ms so far, now at " + where);
-        }
-    }
-
-    /**
      * Returns the file descriptor of the associated socket.
      *
      * @return null-ok; file descriptor
      */
-    FileDescriptor getFileDescriptor() {
+    FileDescriptor getFileDesciptor() {
         return mSocket.getFileDescriptor();
     }
 
@@ -145,8 +131,6 @@ class ZygoteConnection {
         Arguments parsedArgs = null;
         FileDescriptor[] descriptors;
 
-        long startTime = SystemClock.elapsedRealtime();
-
         try {
             args = readArgumentList();
             descriptors = mSocket.getAncillaryFileDescriptors();
@@ -156,7 +140,6 @@ class ZygoteConnection {
             return true;
         }
 
-        checkTime(startTime, "zygoteConnection.runOnce: readArgumentList");
         if (args == null) {
             // EOF reached.
             closeSocket();
@@ -188,18 +171,13 @@ class ZygoteConnection {
                         ", effective=0x" + Long.toHexString(parsedArgs.effectiveCapabilities));
             }
 
-
             applyUidSecurityPolicy(parsedArgs, peer, peerSecurityContext);
             applyRlimitSecurityPolicy(parsedArgs, peer, peerSecurityContext);
             applyInvokeWithSecurityPolicy(parsedArgs, peer, peerSecurityContext);
             applyseInfoSecurityPolicy(parsedArgs, peer, peerSecurityContext);
 
-            checkTime(startTime, "zygoteConnection.runOnce: apply security policies");
-
             applyDebuggerSystemProperty(parsedArgs);
             applyInvokeWithSystemProperty(parsedArgs);
-
-            checkTime(startTime, "zygoteConnection.runOnce: apply security policies");
 
             int[][] rlimits = null;
 
@@ -242,12 +220,10 @@ class ZygoteConnection {
 
             fd = null;
 
-            checkTime(startTime, "zygoteConnection.runOnce: preForkAndSpecialize");
             pid = Zygote.forkAndSpecialize(parsedArgs.uid, parsedArgs.gid, parsedArgs.gids,
                     parsedArgs.debugFlags, rlimits, parsedArgs.mountExternal, parsedArgs.seInfo,
                     parsedArgs.niceName, fdsToClose, parsedArgs.instructionSet,
                     parsedArgs.appDataDir);
-            checkTime(startTime, "zygoteConnection.runOnce: postForkAndSpecialize");
         } catch (IOException ex) {
             logAndPrintError(newStderr, "Exception creating pipe", ex);
         } catch (ErrnoException ex) {
