@@ -3080,6 +3080,12 @@ public final class Settings {
          */
         public static final String STATUS_BAR_NETWORK_STATS_SHOW_ARROW = "status_bar_network_stats_show_arrow";
 
+         /**
+        * Whether navigation bar is enabled or not
+        * @hide
+        */
+        public static final String NAVIGATION_BAR_SHOW = "navigation_bar_show";
+
         /**
          * MediaScanner behavior on boot.
          * 0 = enabled
