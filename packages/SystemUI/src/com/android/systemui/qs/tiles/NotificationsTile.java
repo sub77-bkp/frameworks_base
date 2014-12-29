@@ -34,6 +34,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.media.AudioManager;
+import android.provider.Settings;
 import android.provider.Settings.Global;
 import android.util.Log;
 import android.view.View;
@@ -49,6 +50,8 @@ import com.android.systemui.volume.ZenModePanel;
 
 /** Quick settings tile: Notifications **/
 public class NotificationsTile extends QSTile<NotificationsTile.NotificationsState> {
+    private static final Intent ZEN_MODE_SETTINGS = new Intent(Settings.ACTION_ZEN_MODE_SETTINGS);
+
     private final ZenModeController mZenController;
     private final AudioManager mAudioManager;
 
@@ -87,6 +90,11 @@ public class NotificationsTile extends QSTile<NotificationsTile.NotificationsSta
     @Override
     protected void handleClick() {
         showDetail(true);
+    }
+
+    @Override
+    protected void handleLongClick() {
+        mHost.startSettingsActivity(ZEN_MODE_SETTINGS);
     }
 
     @Override
