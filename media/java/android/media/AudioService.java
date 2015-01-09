@@ -4461,9 +4461,7 @@ public class AudioService extends IAudioService.Stub {
     }
 
     private void onSendBecomingNoisyIntent() {
-        Intent intent = new Intent(AudioManager.ACTION_AUDIO_BECOMING_NOISY);
-        intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
-        sendBroadcastToAll(intent);
+        sendBroadcastToAll(new Intent(AudioManager.ACTION_AUDIO_BECOMING_NOISY));
     }
 
     // must be called synchronized on mConnectedDevices
