@@ -37,6 +37,7 @@ import com.android.systemui.qs.tiles.BluetoothTile;
 import com.android.systemui.qs.tiles.CastTile;
 import com.android.systemui.qs.tiles.CellularTile;
 import com.android.systemui.qs.tiles.ColorInversionTile;
+import com.android.systemui.qs.tiles.CompassTile;
 import com.android.systemui.qs.tiles.FlashlightTile;
 import com.android.systemui.qs.tiles.HotspotTile;
 import com.android.systemui.qs.tiles.IntentTile;
@@ -286,6 +287,8 @@ public class QSTileHost implements QSTile.Host {
                 return new AdbOverNetworkTile(this);
             case QSConstants.TILE_NFC:
                 return new NfcTile(this);
+            case QSConstants.TILE_COMPASS:
+                return new CompassTile(this);
             default:
                 throw new IllegalArgumentException("Bad tile spec: " + tileSpec);
         }
