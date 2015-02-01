@@ -16,6 +16,7 @@
      limitations under the License.
 -->
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+
     <!-- Title of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permgrouplab_security">Security</string>
     <!-- Description of a category of application permissions, listed so the user can choose whether they want to allow the application to do this. -->
@@ -85,7 +86,7 @@
     <string name="app_ops_access_notifications">read your notifications</string>
     <string name="app_ops_activate_vpn">activate a VPN</string>
     <string name="app_ops_alarm_wakeup">wake up the device</string>
-    <string name="app_ops_su">get Superuser access</string>
+    <string name="app_ops_su">get root access</string>
     <string name="app_ops_auto_start">start at power up</string>
     <string name="app_ops_delete_call_log">delete your call log</string>
     <string name="app_ops_delete_contacts">delete your contacts</string>
@@ -168,8 +169,7 @@
     <string name="China_Telecom">China Telecom</string>
 
     <!-- Text of the checkbox for the permission confirmation dialog to remember the user's choice. [CHAR LIMIT=40] -->
-    <string name="permission_remember_choice">Remember</string>
-    <string name="permission">Permission</string>
+    <string name="permission_remember_choice">Remember my choice</string>
 
     <!-- Default wi-fi hotspot ssid -->
     <string name="def_wifi_wifihotspot_ssid" translatable="false"></string>
@@ -177,4 +177,5 @@
     <string name="def_wifi_wifihotspot_pass" translatable="false"></string>
     <!-- Default wi-fi direct name -->
     <string name="def_wifi_direct_name" translatable="false"></string>
+
 </resources>
