@@ -178,6 +178,9 @@
     <!-- Default wi-fi direct name -->
     <string name="def_wifi_direct_name" translatable="false"></string>
 
+    <!-- stylus gestures support -->
+    <string name="stylus_app_not_installed">%s is not installed</string>
+
     <!-- Title of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
     <string name="permlab_accessTorchService">access torch service</string>
     <!-- Description of an application permission, listed so the user can choose whether they want to allow the application to do this. -->
