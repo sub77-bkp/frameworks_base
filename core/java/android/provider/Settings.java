@@ -3277,8 +3277,21 @@ public final class Settings {
         public static final String HEADS_UP_DISMISS_ON_REMOVE = "heads_up_swipe_action";
 
         /**
+<<<<<<< HEAD
          * statusbar network stats text color
          *
+=======
+         * Hide notification 1 second after touching outside
+         * @hide
+         */
+        public static final String HEADS_UP_TOUCH_OUTSIDE = "heads_up_touch_outside";
+
+        /**
+         * MediaScanner behavior on boot.
+         * 0 = enabled
+         * 1 = ask (notification)
+         * 2 = disabled
+>>>>>>> 093fc80... [Heads up] Touch outside to hide (1/2)
          * @hide
          */
         public static final String STATUS_BAR_NETWORK_STATS_TEXT_COLOR = "status_bar_network_stats_text_color";
