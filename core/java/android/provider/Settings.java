@@ -3273,6 +3273,13 @@ public final class Settings {
          */
         public static final String STATUS_BAR_NETWORK_STATS_SHOW_ARROW = "status_bar_network_stats_show_arrow";
 
+        /**
+         * Config for advanced power menu
+         *
+         * @hide
+         */
+        public static final String POWER_MENU_CONFIG = "power_menu_config";
+
          /**
         * Whether navigation bar is enabled or not
         * @hide
