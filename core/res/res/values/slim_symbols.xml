@@ -169,4 +169,12 @@
   <java-symbol type="array" name="config_disabledComponents" />
   <java-symbol type="array" name="config_forceEnabledComponents" />
 
+  <!-- Config Power Menu -->
+  <java-symbol type="drawable" name="ic_lock_power_off_alpha" />
+  <java-symbol type="drawable" name="ic_lock_reboot_alpha" />
+  <java-symbol type="drawable" name="ic_lock_screenshot" />
+  <java-symbol type="drawable" name="ic_lock_airplane_mode_off_am_alpha" />
+  <java-symbol type="drawable" name="ic_lock_lock_alpha" />
+  <java-symbol type="color" name="dslv_icon_dark" />
+
 </resources>
