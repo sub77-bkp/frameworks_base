@@ -129,7 +129,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
     private boolean mHasTelephony;
     private boolean mHasVibrator;
     private final boolean mShowSilentToggle;
-    private final boolean mShowScreenRecord;
 
     /**
      * @param context everything needs a context :(
@@ -164,9 +163,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         mShowSilentToggle = SHOW_SILENT_TOGGLE && !mContext.getResources().getBoolean(
                 com.android.internal.R.bool.config_useFixedVolume);
-
-        mShowScreenRecord = mContext.getResources().getBoolean(
-                com.android.internal.R.bool.config_enableScreenrecordChord);
     }
 
     /**
@@ -232,34 +228,6 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
 
         mItems = new ArrayList<Action>();
 
-        // next: screen record, if enabled
-        if (mShowScreenRecord) {
-            if (Settings.System.getInt(mContext.getContentResolver(),
-                    Settings.System.POWER_MENU_SCREENRECORD_ENABLED, 0) != 0) {
-                mItems.add(
-                    new SinglePressAction(com.android.internal.R.drawable.ic_lock_screen_record,
-                            R.string.global_action_screen_record) {
-
-                        public void onPress() {
-                            toggleScreenRecord();
-                        }
-
-                        public boolean onLongPress() {
-                            return false;
-                        }
-
-                        public boolean showDuringKeyguard() {
-                            return true;
-                        }
-
-                        public boolean showBeforeProvisioning() {
-                            return true;
-                        }
-                    });
-            }
-        }
-
-
         ArrayList<ActionConfig> powerMenuConfig =
                 PolicyHelper.getPowerMenuConfigWithDescription(
                 mContext, "shortcut_action_power_menu_values",
@@ -290,6 +258,8 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
                 }
             } else if (actionKey.equals(PolicyConstants.ACTION_LOCKDOWN)) {
                 mItems.add(getLockdownAction(icon));
+            } else if (actionKey.equals(PolicyConstants.ACTION_SCREENRECORD)) {
+                mItems.add(getScreenRecordAction(icon));
             } else if (actionKey != null) {
                 // must be a screenshot, custom app or action shorcut
                 mItems.add(
@@ -464,6 +434,26 @@ class GlobalActions implements DialogInterface.OnDismissListener, DialogInterfac
             public boolean showBeforeProvisioning() {
                 return false;
             }
+        };
+    }
+
+    private Action getScreenRecordAction(Drawable icon) {
+        return new SinglePressAction(icon, R.string.global_action_screen_record) {
+
+             @Override
+             public void onPress() {
+                 toggleScreenRecord();
+             }
+
+             @Override
+             public boolean showDuringKeyguard() {
+                 return true;
+             }
+
+             @Override
+             public boolean showBeforeProvisioning() {
+                 return true;
+             }
         };
     }
 
