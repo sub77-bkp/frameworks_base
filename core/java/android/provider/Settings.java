@@ -3811,6 +3811,34 @@ public final class Settings {
         public static final String RECENT_CARD_TEXT_COLOR = "recent_card_text_color";
 
         /**
+         * Heads Up Notifications
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_NOTIFICATION = "heads_up_enabled";
+
+        /**
+         * Which applications to disable heads up notifications for
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_CUSTOM_VALUES = "heads_up_custom_values";
+
+        /**
+         * Which applications to disable heads up notifications for
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_BLACKLIST_VALUES = "heads_up_blacklist_values";
+
+        /**
+         * Defines the global heads up notification decay
+         *
+         * @hide
+         */
+        public static final String HEADS_UP_NOTIFCATION_DECAY = "heads_up_notification_decay";
+
+        /**
          * Settings to backup. This is here so that it's in the same place as the settings
          * keys and easy to update.
          *
