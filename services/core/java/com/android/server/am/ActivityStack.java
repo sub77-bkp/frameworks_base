@@ -2487,9 +2487,11 @@ final class ActivityStack {
         }
 
         int taskNdx = mTaskHistory.indexOf(task);
-        do {
-            taskTop = mTaskHistory.get(taskNdx--).getTopActivity();
-        } while (taskTop == null && taskNdx >= 0);
+        if (taskNdx >= 0) {
+            do {
+                taskTop = mTaskHistory.get(taskNdx--).getTopActivity();
+            } while (taskTop == null && taskNdx >= 0);
+        }
 
         if (topOptions != null) {
             // If we got some ActivityOptions from an activity on top that
