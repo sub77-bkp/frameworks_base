@@ -3449,6 +3449,8 @@ public class TelephonyManager {
             return getITelephony().isDataPossibleForSubscription(subId, apnType);
         } catch (RemoteException e) {
             Log.e(TAG, "Error calling ITelephony#isDataPossibleForSubscription", e);
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "Error calling ITelephony#isDataPossibleForSubscription", npe);
         }
         return false;
     }
@@ -3460,6 +3462,8 @@ public class TelephonyManager {
             return getITelephony().needsOtaServiceProvisioning();
         } catch (RemoteException e) {
             Log.e(TAG, "Error calling ITelephony#needsOtaServiceProvisioning", e);
+        } catch (NullPointerException npe) {
+            Log.e(TAG, "Error calling ITelephony#needsOtaServiceProvisioning", npe);
         }
         return false;
     }
@@ -3505,6 +3509,7 @@ public class TelephonyManager {
             return getITelephony().getDataEnabled();
         } catch (RemoteException e) {
             Log.e(TAG, "Error calling ITelephony#getDataEnabled", e);
+        } catch (NullPointerException e) {
         }
         return false;
     }
