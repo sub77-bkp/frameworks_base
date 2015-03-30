@@ -2168,6 +2168,8 @@ public class ConnectivityService extends IConnectivityManager.Stub {
                 rematchNetworkAndRequests(networkToActivate, false);
             }
         }
+        NetworkFactoryInfo nfi = mNetworkFactoryInfos.remove(msg.replyTo);
+        if (DBG && nfi != null) log("unregisterNetworkFactory for " + nfi.name);
     }
 
     private void handleRegisterNetworkRequest(Message msg) {
