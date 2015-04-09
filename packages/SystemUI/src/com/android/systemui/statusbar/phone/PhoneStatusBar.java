@@ -420,9 +420,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
             resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.HEADS_UP_DISMISS_ON_REMOVE), false, this);
             resolver.registerContentObserver(Settings.System.getUriFor(
-                    Settings.System.STATUS_BAR_TICKER_ENABLED),
-                    false, this, UserHandle.USER_ALL);
-            resolver.registerContentObserver(Settings.System.getUriFor(
                     Settings.System.BATTERY_SAVER_MODE_COLOR),
                     false, this, UserHandle.USER_ALL);
             resolver.registerContentObserver(Settings.System.getUriFor(
@@ -491,10 +488,6 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                     resolver, Settings.System.HEADS_UP_DISMISS_ON_REMOVE, 0) == 1;
             mHeadsUpTouchOutside = Settings.System.getInt(
                     resolver, Settings.System.HEADS_UP_TOUCH_OUTSIDE, 0) == 1;
-            mTickerEnabled = Settings.System.getIntForUser(
-                    resolver, Settings.System.STATUS_BAR_TICKER_ENABLED,
-                    mContext.getResources().getBoolean(R.bool.enable_ticker)
-                            ? 1 : 0, UserHandle.USER_CURRENT) == 1;
         }
     }
 
@@ -953,10 +946,7 @@ public class PhoneStatusBar extends BaseStatusBar implements DemoMode,
                         R.id.keyguard_indication_text));
         mKeyguardBottomArea.setKeyguardIndicationController(mKeyguardIndicationController);
 
-        mTickerEnabled = Settings.System.getIntForUser(mContext.getContentResolver(),
-                    Settings.System.STATUS_BAR_TICKER_ENABLED,
-                    mContext.getResources().getBoolean(R.bool.enable_ticker)
-                            ? 1 : 0, UserHandle.USER_CURRENT) == 1;
+        mTickerEnabled = res.getBoolean(R.bool.enable_ticker);
         if (mTickerEnabled) {
             final ViewStub tickerStub = (ViewStub) mStatusBarView.findViewById(R.id.ticker_stub);
             if (tickerStub != null) {
