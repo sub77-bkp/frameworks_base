@@ -808,11 +808,8 @@ final class ActivityStack {
     final boolean startPausingLocked(boolean userLeaving, boolean uiSleeping, boolean resuming,
             boolean dontWait) {
         if (mPausingActivity != null) {
-            Slog.wtf(TAG, "Going to pause when pause is already pending for " + mPausingActivity
-                    + " state=" + mPausingActivity.state);
-            if (mPausingActivity.state == ActivityState.PAUSING) {
-                completePauseLocked(false);
-            }
+            Slog.wtf(TAG, "Going to pause when pause is already pending for " + mPausingActivity);
+            completePauseLocked(false);
         }
         ActivityRecord prev = mResumedActivity;
         if (prev == null) {
