@@ -98,6 +98,7 @@ import android.view.WindowManager;
 import android.view.WindowManagerGlobal;
 import android.view.WindowManagerInternal;
 import android.view.WindowManagerPolicy;
+import android.view.WindowManagerPolicyControl;
 import android.view.accessibility.AccessibilityEvent;
 import android.view.accessibility.AccessibilityManager;
 import android.view.animation.Animation;
