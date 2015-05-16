@@ -177,6 +177,8 @@ public class NotificationPanelView extends PanelView implements
     private float mKeyguardStatusBarAnimateAlpha = 1f;
     private int mOldLayoutDirection;
 
+    private Handler mHandler = new Handler();
+
     public NotificationPanelView(Context context, AttributeSet attrs) {
         super(context, attrs);
         setWillNotDraw(!DEBUG);
