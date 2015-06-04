@@ -211,10 +211,7 @@ public class ResourcesManager {
         }
 
         //Slog.i(TAG, "Resource: key=" + key + ", display metrics=" + metrics);
-        DisplayMetrics dm = null;
-        synchronized(this) {
-            dm = getDisplayMetricsLocked(displayId);
-        }
+        DisplayMetrics dm = getDisplayMetricsLocked(displayId);
         Configuration config;
         boolean isDefaultDisplay = (displayId == Display.DEFAULT_DISPLAY);
         final boolean hasOverrideConfig = key.hasOverrideConfiguration();
