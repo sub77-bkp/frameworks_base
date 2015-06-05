@@ -4296,7 +4296,7 @@ public final class ActivityThread {
             Slog.i(TAG, "Switching default density from "
                     + DisplayMetrics.DENSITY_DEVICE + " to "
                     + mCurDefaultDisplayDpi);
-            //DisplayMetrics.DENSITY_DEVICE = mCurDefaultDisplayDpi;
+            DisplayMetrics.DENSITY_DEVICE = mCurDefaultDisplayDpi;
             Bitmap.setDefaultDensity(DisplayMetrics.DENSITY_DEFAULT);
         }
     }
